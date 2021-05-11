@@ -977,7 +977,7 @@ dependencies = [
 
 [[package]]
 name = "helium-ledger-cli"
-version = "2.0.0-rc2-alpha"
+version = "2.0.0-rc2"
 dependencies = [
  "anyhow",
  "base64 0.12.3",
