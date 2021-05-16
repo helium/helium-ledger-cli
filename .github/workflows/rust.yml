@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches: [main]
-    tags: ["helium-ledger-cli-v*"]
+    tags: ["v*"]
   pull_request:
     branches: [main]
 
