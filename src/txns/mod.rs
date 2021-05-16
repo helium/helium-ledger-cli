@@ -31,8 +31,10 @@ pub enum PubkeyDisplay {
 }
 
 pub(crate) async fn get_ledger_transport(opts: &Opts) -> Result<Box<dyn LedgerTransport>> {
-    Ok(if opts.emulator {
-        Box::new(TransportTcp::new().await?)
+    Ok(if let Some(port) = opts.emulator {
+        use std::net::{IpAddr, Ipv4Addr, SocketAddr};
+        let socket = SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), port);
+        Box::new(TransportTcp::new(socket).await?)
     } else {
         Box::new(TransportNativeHID::new()?)
     })

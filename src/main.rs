@@ -32,8 +32,10 @@ pub struct Opts {
     pub account: u8,
 
     /// Enable interaction with emulator for development and testing
+    /// by configuring port for TCP connection here (typically 9999
+    /// or 40000)
     #[structopt(long = "emulator")]
-    pub emulator: bool,
+    pub emulator: Option<u16>,
 }
 
 #[derive(Debug, StructOpt)]
