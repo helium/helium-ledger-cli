@@ -53,7 +53,7 @@ async fn ledger(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnPaymentV1>
 
     let account = accounts::get(&client, &pubkey.to_string()).await?;
     let nonce: u64 = if let Some(nonce) = cmd.nonce {
-      nonce
+        nonce
     } else {
         account.speculative_nonce + 1
     };
@@ -75,13 +75,12 @@ async fn ledger(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnPaymentV1>
     txn.fee = if let Some(fee) = cmd.fee {
         fee
     } else {
-        txn
-            .txn_fee(
-                &get_txn_fees(&client)
-                    .await
-                    .map_err(|_| Error::getting_fees())?,
-            )
-            .map_err(|_| Error::getting_fees())?
+        txn.txn_fee(
+            &get_txn_fees(&client)
+                .await
+                .map_err(|_| Error::getting_fees())?,
+        )
+        .map_err(|_| Error::getting_fees())?
     };
 
     print_proposed_txn(&txn)?;
