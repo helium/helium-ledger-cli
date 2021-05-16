@@ -2,11 +2,6 @@ use super::*;
 
 #[derive(Debug, StructOpt)]
 pub struct Cmd {
-    pub payee: Payee,
-}
-
-#[derive(Debug)]
-pub struct Payee {
     pub address: PublicKey,
     pub amount: Hnt,
 }
@@ -89,22 +84,6 @@ async fn ledger(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnPaymentV1>
     let pending_txn_status = submit_txn(&client, &envelope).await?;
 
     Ok(Response::Txn(txn, pending_txn_status.hash, payer.network))
-}
-
-use std::str::FromStr;
-
-impl FromStr for Payee {
-    type Err = Box<dyn std::error::Error>;
-
-    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
-        let pos = s
-            .find('=')
-            .ok_or_else(|| format!("invalid KEY=value: missing `=`  in `{}`", s))?;
-        Ok(Payee {
-            address: s[..pos].parse()?,
-            amount: s[pos + 1..].parse()?,
-        })
-    }
 }
 
 pub fn print_proposed_txn(txn: &BlockchainTxnPaymentV1) -> Result {
