@@ -1,14 +1,18 @@
 use super::*;
+use std::str::FromStr;
 
 #[derive(Debug, StructOpt)]
 pub struct Cmd {
-    pub payee: Payee,
-}
-
-#[derive(Debug)]
-pub struct Payee {
-    pub address: PublicKey,
-    pub amount: Hnt,
+    /// Address to send the tokens to
+    address: PublicKey,
+    /// Amount of HNT to send
+    amount: Hnt,
+    /// Manually set the DC fee to pay for the transaction
+    #[structopt(long)]
+    fee: Option<u64>,
+    /// Manually set the nonce for the transaction
+    #[structopt(long)]
+    nonce: Option<u64>,
 }
 
 impl Cmd {
@@ -40,15 +44,19 @@ impl Cmd {
 
 async fn ledger(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnPaymentV1>> {
     let ledger_transport = get_ledger_transport(&opts).await?;
-    let amount = cmd.payee.amount;
-    let payee = cmd.payee.address;
+    let amount = cmd.amount;
+    let payee = cmd.address;
 
     // get nonce
     let pubkey = get_pubkey(opts.account, &ledger_transport, PubkeyDisplay::Off).await?;
     let client = Client::new_with_base_url(api_url(pubkey.network));
 
     let account = accounts::get(&client, &pubkey.to_string()).await?;
-    let nonce: u64 = account.speculative_nonce + 1;
+    let nonce: u64 = if let Some(nonce) = cmd.nonce {
+        nonce
+    } else {
+        account.speculative_nonce + 1
+    };
 
     if account.balance.get_decimal() < amount.get_decimal() {
         return Ok(Response::InsufficientBalance(account.balance, amount));
@@ -64,13 +72,16 @@ async fn ledger(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnPaymentV1>
         fee: 0,
         signature: vec![],
     };
-    txn.fee = txn
-        .txn_fee(
+    txn.fee = if let Some(fee) = cmd.fee {
+        fee
+    } else {
+        txn.txn_fee(
             &get_txn_fees(&client)
                 .await
                 .map_err(|_| Error::getting_fees())?,
         )
-        .map_err(|_| Error::getting_fees())?;
+        .map_err(|_| Error::getting_fees())?
+    };
 
     print_proposed_txn(&txn)?;
 
@@ -89,22 +100,6 @@ async fn ledger(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnPaymentV1>
     let pending_txn_status = submit_txn(&client, &envelope).await?;
 
     Ok(Response::Txn(txn, pending_txn_status.hash, payer.network))
-}
-
-use std::str::FromStr;
-
-impl FromStr for Payee {
-    type Err = Box<dyn std::error::Error>;
-
-    fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
-        let pos = s
-            .find('=')
-            .ok_or_else(|| format!("invalid KEY=value: missing `=`  in `{}`", s))?;
-        Ok(Payee {
-            address: s[..pos].parse()?,
-            amount: s[pos + 1..].parse()?,
-        })
-    }
 }
 
 pub fn print_proposed_txn(txn: &BlockchainTxnPaymentV1) -> Result {
