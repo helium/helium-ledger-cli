@@ -21,7 +21,7 @@ impl Cmd {
         opts: Opts,
         version: Version,
     ) -> Result<Option<(String, Network)>> {
-        if version.major < 2 {
+        if version.major < 2 || version.minor < 1 {
             panic!("Upgrade the Helium Ledger App to use validator commands");
         };
         match self {
