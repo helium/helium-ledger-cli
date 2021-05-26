@@ -10,7 +10,7 @@ pub enum Error {
     VersionError,
     #[error("Error generating QR")]
     Qr(#[from] qr2term::QrError),
-    #[error("Error accessing Ledger HID Device")]
+    #[error("Error accessing Ledger HID Device. Be sure that Ledger Live is not running.")]
     Hid(#[from] ledger_transport::LedgerHIDError),
     #[error("Connection refused by Ledger emulator")]
     Tcp(#[from] ledger_transport::TransportTcpError),
