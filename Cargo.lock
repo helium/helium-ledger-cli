@@ -996,6 +996,8 @@ dependencies = [
  "prost",
  "qr2term",
  "rust_decimal",
+ "serde",
+ "serde_json",
  "structopt",
  "thiserror",
  "tokio",
