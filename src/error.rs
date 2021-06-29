@@ -32,6 +32,8 @@ pub enum Error {
     IntoEnvelope,
     #[error("FromB64 Error")]
     FromB64,
+    #[error("From Json Parsing Error")]
+    SerdeJson(#[from] serde_json::Error),
 }
 
 impl Error {

@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate prettytable;
 
-use helium_api::{pending_transactions::PendingTxnStatus, Hnt};
+use helium_api::{models::PendingTxnStatus, Hnt};
 use helium_crypto::Network;
 use helium_proto::BlockchainTxn;
 use ledger_transport::exchange::Exchange as LedgerTransport;
@@ -56,7 +56,7 @@ enum Cmd {
     /// Pay a given address.
     Pay(txns::pay::Cmd),
     /// Stake a validator
-    Validator(txns::validator::Cmd),
+    Validators(txns::validator::Cmd),
 }
 
 #[tokio::main]
@@ -99,21 +99,25 @@ async fn run(cli: Cli) -> Result {
     let result = match cli.cmd {
         Cmd::Balance(balance) => balance.run(cli.opts, version).await?,
         Cmd::Pay(pay) => pay.run(cli.opts, version).await?,
-        Cmd::Validator(validator) => validator.run(cli.opts, version).await?,
+        Cmd::Validators(validator) => validator.run(cli.opts, version).await?,
     };
     if let Some((hash, network)) = result {
-        println!("\nSuccessfully submitted transaction to API:");
-
-        let mut table = Table::new();
-        table.add_row(row!["Network", "Hash"]);
-        table.add_row(row![network, hash]);
-        table.printstd();
-
-        println!("To check on transaction status, monitor the following URL:");
-        println!("     {}/pending_transactions/{}", api_url(network), hash);
+        print_txn(hash, network);
     }
 
     Ok(())
+}
+
+fn print_txn(hash: String, network: Network) {
+    println!("\nSuccessfully submitted transaction to API:");
+
+    let mut table = Table::new();
+    table.add_row(row!["Network", "Hash"]);
+    table.add_row(row![network, hash]);
+    table.printstd();
+
+    println!("To check on transaction status, monitor the following URL:");
+    println!("     {}/pending_transactions/{}", api_url(network), hash);
 }
 
 use helium_api::Client;

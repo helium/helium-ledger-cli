@@ -10,9 +10,9 @@ anyhow = "1.0"
 thiserror = "1"
 byteorder = "1"
 structopt = "0"
-helium-api = "2.0.4"
+helium-api = "3"
 helium-wallet = { git = "https://github.com/helium/helium-wallet-rs" }
-helium-crypto = {git = "https://github.com/helium/helium-crypto-rs", tag="v0.0.8"}
+helium-crypto = {git = "https://github.com/helium/helium-crypto-rs", tag="v0.1.0"}
 helium-proto = { git = "https://github.com/helium/proto", branch="master"}
 prettytable-rs = "0"
 bs58 = {version = "0", features=["check"]}
@@ -20,12 +20,12 @@ base64 = "0"
 rust_decimal = "1"
 prost = "0"
 qr2term = "0"
+serde =  { version = "1", features = ["derive"] }
+serde_json = "1"
 tokio = {version = "1.2", features = ["full"]}
+
 [dependencies.ledger-transport]
 git = "https://github.com/helium/ledger-rs"
 branch = "lthiery/tcp-transport"
 default-features = false
 features = ["transport-hid", "transport-tcp"]
-
-[patch.crates-io]
-elliptic-curve = { git = "https://github.com/helium/traits.git", branch = "rg/compact" }

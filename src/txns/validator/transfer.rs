@@ -138,6 +138,7 @@ pub(crate) async fn ledger_create(
             helium_api::validators::get(&client, &txfer_stake.old_address.to_string())
                 .await?
                 .stake
+                .into()
         },
         new_owner_signature: vec![],
         old_owner_signature: vec![],
