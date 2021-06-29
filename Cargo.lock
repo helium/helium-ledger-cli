@@ -955,22 +955,6 @@ dependencies = [
 
 [[package]]
 name = "helium-api"
-version = "2.0.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4cde7697193dfee4c7d20612a18578f1e217c36004c6db762a3ffed7e39bd13d"
-dependencies = [
- "async-trait",
- "base64 0.13.0",
- "futures",
- "reqwest",
- "rust_decimal",
- "serde",
- "serde_json",
- "thiserror",
-]
-
-[[package]]
-name = "helium-api"
 version = "3.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "54e90ae27bf5f3220976ecc200aff558cbb160561beb46cf1188d0a963a42496"
@@ -1008,7 +992,7 @@ dependencies = [
  "base64 0.13.0",
  "bs58",
  "byteorder",
- "helium-api 2.0.6",
+ "helium-api",
  "helium-crypto",
  "helium-proto",
  "helium-wallet",
@@ -1050,7 +1034,7 @@ dependencies = [
  "dialoguer",
  "geo-types",
  "h3ron",
- "helium-api 3.0.1",
+ "helium-api",
  "helium-crypto",
  "helium-proto",
  "hex",

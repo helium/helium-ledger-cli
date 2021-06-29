@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate prettytable;
 
-use helium_api::{pending_transactions::PendingTxnStatus, Hnt};
+use helium_api::{models::PendingTxnStatus, Hnt};
 use helium_crypto::Network;
 use helium_proto::BlockchainTxn;
 use ledger_transport::exchange::Exchange as LedgerTransport;

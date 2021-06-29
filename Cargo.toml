@@ -10,7 +10,7 @@ anyhow = "1.0"
 thiserror = "1"
 byteorder = "1"
 structopt = "0"
-helium-api = "2.0.4"
+helium-api = "3"
 helium-wallet = { git = "https://github.com/helium/helium-wallet-rs" }
 helium-crypto = {git = "https://github.com/helium/helium-crypto-rs", tag="v0.1.0"}
 helium-proto = { git = "https://github.com/helium/proto", branch="master"}
