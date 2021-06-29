@@ -63,7 +63,8 @@ pub(crate) async fn ledger(
         } else {
             helium_api::validators::get(&client, &unstake.address.to_string())
                 .await?
-                .stake.into()
+                .stake
+                .into()
         },
         stake_release_height: unstake.stake_release_height,
         fee: 0,
