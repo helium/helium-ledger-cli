@@ -1,7 +1,7 @@
 use crate::txns::*;
+use rust_decimal::Decimal;
 use serde::Deserialize;
 use std::path::PathBuf;
-use rust_decimal::Decimal;
 
 #[derive(Debug, StructOpt)]
 /// Onboard one (or more) validators  with this wallet.
@@ -76,10 +76,7 @@ impl Cmd {
         }
     }
 
-    pub(crate) async fn ledger(
-        self,
-        opts: Opts,
-    ) -> Result<Response> {
+    pub(crate) async fn ledger(self, opts: Opts) -> Result<Response> {
         let validators = self.collect_validators()?;
 
         let ledger_transport = get_ledger_transport(&opts).await?;
@@ -91,10 +88,16 @@ impl Cmd {
 
         let account = accounts::get(&client, &owner.to_string()).await?;
 
-        let total_stake_amount = validators.iter().map(|v| v.stake.get_decimal()).sum::<Decimal>();
+        let total_stake_amount = validators
+            .iter()
+            .map(|v| v.stake.get_decimal())
+            .sum::<Decimal>();
 
         if account.balance.get_decimal() < total_stake_amount {
-            return Ok(Response::InsufficientBalance(account.balance,Hnt::new(total_stake_amount)));
+            return Ok(Response::InsufficientBalance(
+                account.balance,
+                Hnt::new(total_stake_amount),
+            ));
         }
 
         for validator in validators {
@@ -121,19 +124,17 @@ impl Cmd {
                 return Ok(Response::UserDeniedTransaction);
             }
 
-            let txn = BlockchainTxnStakeValidatorV1::decode(exchange_pay_tx_result.data.as_slice())?;
+            let txn =
+                BlockchainTxnStakeValidatorV1::decode(exchange_pay_tx_result.data.as_slice())?;
             let envelope = txn.in_envelope();
             // submit the signed tansaction to the API
             let pending_txn_status = submit_txn(&client, &envelope).await?;
 
             print_txn(pending_txn_status.hash, owner.network)
-
         }
         Ok(Response::Success)
     }
 }
-
-
 
 fn print_proposed_transaction(stake: &BlockchainTxnStakeValidatorV1) -> Result {
     let address = PublicKey::try_from(stake.address.clone())?;

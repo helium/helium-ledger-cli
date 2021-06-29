@@ -120,7 +120,6 @@ fn print_txn(hash: String, network: Network) {
     println!("     {}/pending_transactions/{}", api_url(network), hash);
 }
 
-
 use helium_api::Client;
 use prettytable::{format, Table};
 
