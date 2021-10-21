@@ -55,11 +55,17 @@ async fn print_balance(pubkeys: &[PublicKey]) -> Result {
         Network::MainNet => "Balance HNT",
     };
 
+    let staked = match network {
+        Network::TestNet => "Staked TNT",
+        Network::MainNet => "Staked HNT",
+    };
+
     if pubkeys.len() > 1 {
         table.set_titles(row![
             "Index",
             "Address",
             balance,
+            staked,
             "Data Credits",
             "Security Tokens"
         ]);
