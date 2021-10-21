@@ -1,9 +1,9 @@
 use crate::*;
 use byteorder::{LittleEndian as LE, WriteBytesExt};
-use helium_api::{accounts, Client, Hnt};
+use helium_api::{accounts, models::Hnt, Client};
 use helium_proto::{
-    BlockchainTxnPaymentV1, BlockchainTxnStakeValidatorV1, BlockchainTxnTransferValidatorStakeV1,
-    BlockchainTxnUnstakeValidatorV1,
+    BlockchainTxnPaymentV1, BlockchainTxnStakeValidatorV1, BlockchainTxnTokenBurnV1,
+    BlockchainTxnTransferValidatorStakeV1, BlockchainTxnUnstakeValidatorV1,
 };
 use helium_wallet::{
     cmd::get_txn_fees,
@@ -15,6 +15,7 @@ use prost::Message;
 use std::convert::TryFrom;
 
 pub mod balance;
+pub mod burn;
 pub mod pay;
 pub mod serializer;
 pub mod validator;
