@@ -1,14 +1,15 @@
 #[macro_use]
 extern crate prettytable;
 
-use helium_api::{models::PendingTxnStatus, Hnt};
-use helium_crypto::Network;
+use helium_api::models::{Hnt, PendingTxnStatus};
 use helium_proto::BlockchainTxn;
+use helium_wallet::keypair::Network;
 use ledger_transport::exchange::Exchange as LedgerTransport;
 use qr2term::print_qr;
 use std::{env, fmt, process};
 use structopt::StructOpt;
 mod error;
+mod memo;
 mod txns;
 
 pub use error::Error;
@@ -53,6 +54,8 @@ pub struct Cli {
 enum Cmd {
     /// Get wallet information
     Balance(txns::balance::Cmd),
+    /// Burn to given address.
+    Burn(txns::burn::Cmd),
     /// Pay a given address.
     Pay(txns::pay::Cmd),
     /// Stake a validator
@@ -98,6 +101,7 @@ async fn run(cli: Cli) -> Result {
 
     let result = match cli.cmd {
         Cmd::Balance(balance) => balance.run(cli.opts, version).await?,
+        Cmd::Burn(burn) => burn.run(cli.opts, version).await?,
         Cmd::Pay(pay) => pay.run(cli.opts, version).await?,
         Cmd::Validators(validator) => validator.run(cli.opts, version).await?,
     };

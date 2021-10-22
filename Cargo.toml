@@ -11,8 +11,8 @@ thiserror = "1"
 byteorder = "1"
 structopt = "0"
 helium-api = "3"
-helium-wallet = { git = "https://github.com/helium/helium-wallet-rs" }
-helium-crypto = {git = "https://github.com/helium/helium-crypto-rs", tag="v0.1.0"}
+helium-wallet = { git = "https://github.com/helium/helium-wallet-rs", tag = "v1.6.8" }
+helium-crypto = {git = "https://github.com/helium/helium-crypto-rs", tag="v0.3.0"}
 helium-proto = { git = "https://github.com/helium/proto", branch="master"}
 prettytable-rs = "0"
 bs58 = {version = "0", features=["check"]}

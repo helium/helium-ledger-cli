@@ -6,6 +6,7 @@ pub const INS_SIGN_PAYMENT_TXN: u8 = 0x08;
 pub const INS_SIGN_VALIDATOR_STAKE_TXN: u8 = 0x09;
 pub const INS_SIGN_VALIDATOR_TXFER_TXN: u8 = 0x0A;
 pub const INS_SIGN_VALIDATOR_UNSTAKE_TXN: u8 = 0x0B;
+pub const INS_SIGN_BURN_TXN: u8 = 0x0C;
 
 pub trait ApduSerializer {
     fn apdu_serialize(&self, account: u8) -> Result<APDUCommand>;
@@ -107,6 +108,7 @@ impl ApduSerializer for BlockchainTxnTransferValidatorStakeV1 {
         })
     }
 }
+
 impl ApduSerializer for BlockchainTxnUnstakeValidatorV1 {
     fn apdu_serialize(&self, account: u8) -> Result<APDUCommand> {
         let mut data: Vec<u8> = Vec::new();
@@ -119,6 +121,26 @@ impl ApduSerializer for BlockchainTxnUnstakeValidatorV1 {
         Ok(APDUCommand {
             cla: 0xe0,
             ins: INS_SIGN_VALIDATOR_UNSTAKE_TXN,
+            p1: account,
+            p2: 0x00,
+            data,
+        })
+    }
+}
+
+impl ApduSerializer for BlockchainTxnTokenBurnV1 {
+    fn apdu_serialize(&self, account: u8) -> Result<APDUCommand> {
+        let mut data = Vec::new();
+        data.write_u64::<LE>(self.amount)?;
+        data.write_u64::<LE>(self.fee)?;
+        data.write_u64::<LE>(self.nonce)?;
+        data.write_u64::<LE>(self.memo)?;
+        data.push(0);
+        data.extend(self.payee.clone());
+
+        Ok(APDUCommand {
+            cla: 0xe0,
+            ins: INS_SIGN_BURN_TXN,
             p1: account,
             p2: 0x00,
             data,
