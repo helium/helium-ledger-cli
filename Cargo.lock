@@ -975,9 +975,9 @@ dependencies = [
 
 [[package]]
 name = "helium-api"
-version = "3.1.0"
+version = "3.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f2cf895c75ee34be24eca84e5b2e18446658bf0768cb9400cf9fe56624ed350d"
+checksum = "2d1ae9f708dcd4d1976373ce450d69d70cb1be81cb4deb055204a175561f7426"
 dependencies = [
  "async-trait",
  "base64 0.13.0",
@@ -1005,6 +1005,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "helium-crypto"
+version = "0.3.1"
+source = "git+https://github.com/helium/helium-crypto-rs?tag=v0.3.1#33ac71d8e54dbb644dff0cbc8ca5b1ef482f03a0"
+dependencies = [
+ "bs58",
+ "ed25519-dalek",
+ "p256",
+ "rand_core 0.6.3",
+ "serde",
+ "signature",
+ "thiserror",
+]
+
+[[package]]
 name = "helium-ledger-cli"
 version = "2.1.1-alpha.0"
 dependencies = [
@@ -1013,7 +1027,7 @@ dependencies = [
  "bs58",
  "byteorder",
  "helium-api",
- "helium-crypto",
+ "helium-crypto 0.3.1",
  "helium-proto",
  "helium-wallet",
  "ledger-transport",
@@ -1031,7 +1045,7 @@ dependencies = [
 [[package]]
 name = "helium-proto"
 version = "0.1.0"
-source = "git+https://github.com/helium/proto?branch=master#0068af362ca4ab99b2511a86217a0f874191a771"
+source = "git+https://github.com/helium/proto?branch=master#4b54af7b89061967160bf852c9bfd30c09bbf9a1"
 dependencies = [
  "bytes",
  "prost",
@@ -1043,20 +1057,20 @@ dependencies = [
 
 [[package]]
 name = "helium-wallet"
-version = "1.6.8"
-source = "git+https://github.com/helium/helium-wallet-rs?tag=v1.6.8#5a242e49361267ac5060cf97e53d529fd2f7bdef"
+version = "1.6.8-dev"
+source = "git+https://github.com/helium/helium-wallet-rs?branch=ak/update-api#5057f44b43d80c72e72d729d9939bd8a281741cb"
 dependencies = [
  "aes-gcm",
  "angry-purple-tiger",
  "anyhow",
- "base64 0.12.3",
+ "base64 0.13.0",
  "bitvec",
  "byteorder",
  "dialoguer",
  "geo-types",
  "h3ron",
  "helium-api",
- "helium-crypto",
+ "helium-crypto 0.3.0",
  "helium-proto",
  "hex",
  "hmac",
