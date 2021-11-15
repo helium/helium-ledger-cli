@@ -10,8 +10,8 @@ anyhow = "1.0"
 thiserror = "1"
 byteorder = "1"
 structopt = "0"
-helium-api = "3"
-helium-wallet = { git = "https://github.com/helium/helium-wallet-rs", branch = "ak/update-api" }
+helium-api = {git = "https://github.com/helium/helium-api-rs", branch = "master"}
+helium-wallet = { git = "https://github.com/helium/helium-wallet-rs", branch = "lthiery/add-staked-balance" }
 helium-crypto = {git = "https://github.com/helium/helium-crypto-rs", tag="v0.3.1"}
 helium-proto = { git = "https://github.com/helium/proto", branch="master"}
 prettytable-rs = "0"

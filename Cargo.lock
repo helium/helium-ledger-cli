@@ -975,32 +975,17 @@ dependencies = [
 
 [[package]]
 name = "helium-api"
-version = "3.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2d1ae9f708dcd4d1976373ce450d69d70cb1be81cb4deb055204a175561f7426"
+version = "3.1.2-dev"
+source = "git+https://github.com/helium/helium-api-rs?branch=master#565d9a93fb94a2a8d733658f1f62ca1273dbdf42"
 dependencies = [
  "async-trait",
- "base64 0.13.0",
+ "base64 0.12.3",
  "chrono",
  "futures",
  "reqwest",
  "rust_decimal",
  "serde",
  "serde_json",
- "thiserror",
-]
-
-[[package]]
-name = "helium-crypto"
-version = "0.3.0"
-source = "git+https://github.com/helium/helium-crypto-rs?tag=v0.3.0#f446f0e7fab57b4286aa61dd90e9997a17358619"
-dependencies = [
- "bs58",
- "ed25519-dalek",
- "p256",
- "rand_core 0.6.3",
- "serde",
- "signature",
  "thiserror",
 ]
 
@@ -1027,7 +1012,7 @@ dependencies = [
  "bs58",
  "byteorder",
  "helium-api",
- "helium-crypto 0.3.1",
+ "helium-crypto",
  "helium-proto",
  "helium-wallet",
  "ledger-transport",
@@ -1057,20 +1042,20 @@ dependencies = [
 
 [[package]]
 name = "helium-wallet"
-version = "1.6.8-dev"
-source = "git+https://github.com/helium/helium-wallet-rs?branch=ak/update-api#5057f44b43d80c72e72d729d9939bd8a281741cb"
+version = "1.6.9-dev"
+source = "git+https://github.com/helium/helium-wallet-rs?branch=lthiery/add-staked-balance#565362e934a0af120dd5fc1ade040e409b65c36a"
 dependencies = [
  "aes-gcm",
  "angry-purple-tiger",
  "anyhow",
- "base64 0.13.0",
+ "base64 0.12.3",
  "bitvec",
  "byteorder",
  "dialoguer",
  "geo-types",
  "h3ron",
  "helium-api",
- "helium-crypto 0.3.0",
+ "helium-crypto",
  "helium-proto",
  "hex",
  "hmac",
