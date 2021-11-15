@@ -70,7 +70,13 @@ async fn print_balance(pubkeys: &[PublicKey]) -> Result {
             "Security Tokens"
         ]);
     } else {
-        table.set_titles(row!["Address", balance, staked_balance, "Data Credits", "Security Tokens"]);
+        table.set_titles(row![
+            "Address",
+            balance,
+            staked_balance,
+            "Data Credits",
+            "Security Tokens"
+        ]);
     }
     for (account_index, pubkey) in pubkeys.iter().enumerate() {
         let address = pubkey.to_string();
