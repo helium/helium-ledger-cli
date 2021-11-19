@@ -1,6 +1,6 @@
 use crate::*;
 use byteorder::{LittleEndian as LE, WriteBytesExt};
-use helium_api::{accounts, models::Hnt, Client};
+use helium_api::{accounts, models::Hnt};
 use helium_proto::{
     BlockchainTxnPaymentV1, BlockchainTxnStakeValidatorV1, BlockchainTxnTokenBurnV1,
     BlockchainTxnTransferValidatorStakeV1, BlockchainTxnUnstakeValidatorV1,

@@ -84,7 +84,7 @@ impl Cmd {
         // get account from API so we can get nonce and balance
         let owner = get_pubkey(opts.account, &ledger_transport, PubkeyDisplay::Off).await?;
 
-        let client = Client::new_with_base_url(api_url(owner.network));
+        let client = new_client(owner.network);
 
         let account = accounts::get(&client, &owner.to_string()).await?;
 

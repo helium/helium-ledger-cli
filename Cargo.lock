@@ -975,9 +975,9 @@ dependencies = [
 
 [[package]]
 name = "helium-api"
-version = "3.1.0"
+version = "3.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f2cf895c75ee34be24eca84e5b2e18446658bf0768cb9400cf9fe56624ed350d"
+checksum = "0d563b8a63558a8bf30376ad311128c6c4e346b9d43c3f9d1c68be73c53c9115"
 dependencies = [
  "async-trait",
  "base64 0.13.0",
@@ -992,8 +992,8 @@ dependencies = [
 
 [[package]]
 name = "helium-crypto"
-version = "0.3.0"
-source = "git+https://github.com/helium/helium-crypto-rs?tag=v0.3.0#f446f0e7fab57b4286aa61dd90e9997a17358619"
+version = "0.3.1"
+source = "git+https://github.com/helium/helium-crypto-rs?tag=v0.3.1#33ac71d8e54dbb644dff0cbc8ca5b1ef482f03a0"
 dependencies = [
  "bs58",
  "ed25519-dalek",
@@ -1031,7 +1031,7 @@ dependencies = [
 [[package]]
 name = "helium-proto"
 version = "0.1.0"
-source = "git+https://github.com/helium/proto?branch=master#0068af362ca4ab99b2511a86217a0f874191a771"
+source = "git+https://github.com/helium/proto?branch=master#4b54af7b89061967160bf852c9bfd30c09bbf9a1"
 dependencies = [
  "bytes",
  "prost",
@@ -1043,8 +1043,8 @@ dependencies = [
 
 [[package]]
 name = "helium-wallet"
-version = "1.6.8"
-source = "git+https://github.com/helium/helium-wallet-rs?tag=v1.6.8#5a242e49361267ac5060cf97e53d529fd2f7bdef"
+version = "1.6.9"
+source = "git+https://github.com/helium/helium-wallet-rs?tag=v1.6.9#20d02e679be0a64fcd20369593357474ab31f771"
 dependencies = [
  "aes-gcm",
  "angry-purple-tiger",

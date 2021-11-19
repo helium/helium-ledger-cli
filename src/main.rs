@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate prettytable;
 
-use helium_api::models::{Hnt, PendingTxnStatus};
+use helium_api::models::{transactions::PendingTxnStatus, Hnt};
 use helium_proto::BlockchainTxn;
 use helium_wallet::keypair::Network;
 use ledger_transport::exchange::Exchange as LedgerTransport;
@@ -16,6 +16,8 @@ pub use error::Error;
 pub type Result<T = ()> = std::result::Result<T, Error>;
 
 const DEFAULT_TESTNET_BASE_URL: &str = "https://testnet-api.helium.wtf/v1";
+pub(crate) static USER_AGENT: &str =
+    concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"));
 
 #[derive(StructOpt, Debug)]
 enum Units {
@@ -134,6 +136,11 @@ pub async fn submit_txn(client: &Client, txn: &BlockchainTxn) -> Result<PendingT
     helium_api::pending_transactions::submit(client, &data)
         .await
         .map_err(|e| e.into())
+}
+
+fn new_client(network: Network) -> Client {
+    println!("{}", USER_AGENT);
+    Client::new_with_base_url(api_url(network), USER_AGENT)
 }
 
 fn api_url(network: Network) -> String {

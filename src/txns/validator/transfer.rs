@@ -123,7 +123,7 @@ pub(crate) async fn ledger_create(
         return Ok(None);
     }
 
-    let client = Client::new_with_base_url(api_url(old_owner.network));
+    let client = new_client(old_owner.network);
     // calculate fee
     let mut txn = BlockchainTxnTransferValidatorStakeV1 {
         new_owner: new_owner.to_vec(),
@@ -231,7 +231,7 @@ pub(crate) async fn ledger_accept(
     }
 
     // submit the signed transaction to the API
-    let client = Client::new_with_base_url(api_url(old_owner.network));
+    let client = new_client(old_owner.network);
     let pending_txn_status = submit_txn(&client, &input_txn.in_envelope()).await?;
 
     Ok(Some(Response::Txn(
