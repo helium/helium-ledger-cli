@@ -47,7 +47,7 @@ async fn print_balance(pubkeys: &[PublicKey]) -> Result {
     // sample the first pubkey to determine network
     let network = pubkeys[0].network;
 
-    let client = Client::new_with_base_url(api_url(network));
+    let client = new_client(network);
     let mut table = Table::new();
     table.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
     let balance = match network {

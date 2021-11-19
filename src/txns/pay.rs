@@ -49,7 +49,7 @@ async fn ledger(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnPaymentV1>
 
     // get nonce
     let pubkey = get_pubkey(opts.account, &ledger_transport, PubkeyDisplay::Off).await?;
-    let client = Client::new_with_base_url(api_url(pubkey.network));
+    let client = new_client(pubkey.network);
 
     let account = accounts::get(&client, &pubkey.to_string()).await?;
     let nonce: u64 = if let Some(nonce) = cmd.nonce {

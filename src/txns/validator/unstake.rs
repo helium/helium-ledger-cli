@@ -53,7 +53,7 @@ pub(crate) async fn ledger(
     // get account from API so we can get nonce and balance
     let owner = get_pubkey(opts.account, &ledger, PubkeyDisplay::Off).await?;
 
-    let client = Client::new_with_base_url(api_url(owner.network));
+    let client = new_client(owner.network);
 
     let mut txn = BlockchainTxnUnstakeValidatorV1 {
         owner: owner.to_vec(),
