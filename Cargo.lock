@@ -975,12 +975,12 @@ dependencies = [
 
 [[package]]
 name = "helium-api"
-version = "3.2.0"
+version = "3.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0d563b8a63558a8bf30376ad311128c6c4e346b9d43c3f9d1c68be73c53c9115"
+checksum = "dd90ff69f197482676574db441887d32126bc07d228205efa62884d5fc9c4540"
 dependencies = [
  "async-trait",
- "base64 0.13.0",
+ "base64 0.12.3",
  "chrono",
  "futures",
  "reqwest",
@@ -1006,10 +1006,10 @@ dependencies = [
 
 [[package]]
 name = "helium-ledger-cli"
-version = "2.1.1-alpha.0"
+version = "2.1.3-dev"
 dependencies = [
  "anyhow",
- "base64 0.13.0",
+ "base64 0.12.3",
  "bs58",
  "byteorder",
  "helium-api",
