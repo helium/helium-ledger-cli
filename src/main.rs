@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate prettytable;
 
-use helium_api::models::{transactions::PendingTxnStatus, Hnt};
+use helium_api::models::{transactions::PendingTxnStatus};
 use helium_proto::BlockchainTxn;
 use helium_wallet::keypair::Network;
 use ledger_transport::exchange::Exchange as LedgerTransport;
@@ -18,14 +18,6 @@ pub type Result<T = ()> = std::result::Result<T, Error>;
 const DEFAULT_TESTNET_BASE_URL: &str = "https://testnet-api.helium.wtf/v1";
 pub(crate) static USER_AGENT: &str =
     concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"));
-
-#[derive(StructOpt, Debug)]
-enum Units {
-    /// Pay using Bones as units (must be integer)
-    Bones { bones: u64 },
-    /// Pay using HNT as units (up to 8 decimals are tolerated)
-    Hnt { hnt: Hnt },
-}
 
 /// Common options for most wallet commands
 #[derive(Debug, StructOpt)]

@@ -1,6 +1,7 @@
 use crate::txns::*;
 use helium_wallet::traits::B64;
 
+#[allow(clippy::large_enum_variant)]
 #[derive(Debug, StructOpt)]
 /// Create or accept a validator transfer with this Ledger wallet
 pub enum Cmd {

@@ -6,9 +6,8 @@ use helium_proto::{
     BlockchainTxnTransferValidatorStakeV1, BlockchainTxnUnstakeValidatorV1,
 };
 use helium_wallet::{
-    cmd::get_txn_fees,
     keypair::{Network, PublicKey},
-    traits::{TxnEnvelope, TxnFee},
+    traits::{TxnEnvelope, TxnFee, TxnFeeConfig},
 };
 use ledger_transport::*;
 use prost::Message;
@@ -80,5 +79,20 @@ async fn read_from_ledger(
         Err(Error::AppNotRunning)
     } else {
         Ok(answer)
+    }
+}
+
+pub async fn get_txn_fees(client: &Client) -> Result<TxnFeeConfig> {
+    let vars = helium_api::vars::get(client).await?;
+    if vars.contains_key("txn_fees") {
+        match vars["txn_fees"].as_bool() {
+            Some(true) => {
+                let config: TxnFeeConfig = serde_json::from_value(serde_json::Value::Object(vars))?;
+                Ok(config)
+            }
+            _ => Ok(TxnFeeConfig::legacy()),
+        }
+    } else {
+        Ok(TxnFeeConfig::legacy())
     }
 }
