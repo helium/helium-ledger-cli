@@ -55,16 +55,28 @@ async fn print_balance(pubkeys: &[PublicKey]) -> Result {
         Network::MainNet => "Balance HNT",
     };
 
+    let staked_balance = match network {
+        Network::TestNet => "Staked TNT",
+        Network::MainNet => "Staked HNT",
+    };
+
     if pubkeys.len() > 1 {
         table.set_titles(row![
             "Index",
             "Address",
             balance,
+            staked_balance,
             "Data Credits",
             "Security Tokens"
         ]);
     } else {
-        table.set_titles(row!["Address", balance, "Data Credits", "Security Tokens"]);
+        table.set_titles(row![
+            "Address",
+            balance,
+            staked_balance,
+            "Data Credits",
+            "Security Tokens"
+        ]);
     }
     for (account_index, pubkey) in pubkeys.iter().enumerate() {
         let address = pubkey.to_string();
@@ -75,6 +87,7 @@ async fn print_balance(pubkeys: &[PublicKey]) -> Result {
                     account_index,
                     address,
                     account.balance,
+                    account.staked_balance,
                     account.dc_balance,
                     account.sec_balance
                 ]),
@@ -85,6 +98,7 @@ async fn print_balance(pubkeys: &[PublicKey]) -> Result {
                 Ok(account) => table.add_row(row![
                     address,
                     account.balance,
+                    account.staked_balance,
                     account.dc_balance,
                     account.sec_balance
                 ]),

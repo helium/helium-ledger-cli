@@ -71,13 +71,16 @@ pub(crate) async fn ledger(
         owner_signature: vec![],
     };
 
-    txn.fee = txn
-        .txn_fee(
+    txn.fee = if let Some(fee) = unstake.fee {
+        fee
+    } else {
+        txn.txn_fee(
             &get_txn_fees(&client)
                 .await
                 .map_err(|_| Error::getting_fees())?,
         )
-        .map_err(|_| Error::getting_fees())?;
+        .map_err(|_| Error::getting_fees())?
+    };
 
     print_proposed_txn(&txn)?;
 
