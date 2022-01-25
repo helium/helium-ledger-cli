@@ -54,6 +54,8 @@ enum Cmd {
     Pay(txns::pay::Cmd),
     /// Stake a validator
     Validators(txns::validator::Cmd),
+    /// Transfer Security Tokens
+    Securities(txns::securities::Cmd),
 }
 
 #[tokio::main]
@@ -98,6 +100,8 @@ async fn run(cli: Cli) -> Result {
         Cmd::Burn(burn) => burn.run(cli.opts, version).await?,
         Cmd::Pay(pay) => pay.run(cli.opts, version).await?,
         Cmd::Validators(validator) => validator.run(cli.opts, version).await?,
+        Cmd::Securities(securities) => securities.run(cli.opts, version).await?,
+
     };
     if let Some((hash, network)) = result {
         print_txn(hash, network);

@@ -1,22 +1,24 @@
 use super::*;
-use crate::memo::Memo;
 use std::str::FromStr;
 
 #[derive(Debug, StructOpt)]
-pub struct Cmd {
-    /// Address to send the tokens to
+/// Work with security tokens
+pub enum Cmd {
+    Transfer(Transfer),
+}
+
+#[derive(Debug, StructOpt)]
+pub struct Transfer {
+    /// The address of the recipient of the security tokens
     address: PublicKey,
-    /// Amount of HNT to send
-    amount: Hnt,
-    /// Memo field to include. Provide as a base64 encoded string
-    #[structopt(long, default_value = "AAAAAAAAAAA=")]
-    memo: Memo,
+    /// The number of security tokens to transfer
+    amount: Hst,
     /// Manually set the DC fee to pay for the transaction
     #[structopt(long)]
     fee: Option<u64>,
     /// Manually set the nonce for the transaction
     #[structopt(long)]
-    nonce: Option<u64>,
+    sec_nonce: Option<u64>,
 }
 
 impl Cmd {
@@ -29,31 +31,35 @@ impl Cmd {
             panic!("Upgrade the Helium Ledger App to use additional wallet accounts");
         };
 
-        match ledger(opts, self).await? {
-            Response::Txn(_txn, hash, network) => Ok(Some((hash, network))),
-            Response::InsufficientBalance(balance, send_request) => {
-                println!(
-                    "Account balance insufficient. {} HNT on account but attempting to send {}",
-                    balance, send_request,
-                );
-                Err(Error::txn())
-            }
-            Response::InsufficientSecBalance(balance, send_request) => {
-                println!(
-                    "Account security balance insufficient. {} HST on account but attempting to send {}",
-                    balance, send_request,
-                );
-                Err(Error::txn())
-            }
-            Response::UserDeniedTransaction => {
-                println!("Transaction not confirmed");
-                Err(Error::txn())
+        match self {
+            Cmd::Transfer(txfer) => {
+                match ledger(opts, txfer).await? {
+                    Response::Txn(_txn, hash, network) => Ok(Some((hash, network))),
+                    Response::InsufficientBalance(balance, send_request) => {
+                        println!(
+                            "Account balance insufficient. {} HNT on account but attempting to send {}",
+                            balance, send_request,
+                        );
+                        Err(Error::txn())
+                    }
+                    Response::InsufficientSecBalance(balance, send_request) => {
+                        println!(
+                            "Account security balance insufficient. {} HST on account but attempting to send {}",
+                            balance, send_request,
+                        );
+                        Err(Error::txn())
+                    }
+                    Response::UserDeniedTransaction => {
+                        println!("Transaction not confirmed");
+                        Err(Error::txn())
+                    }
+                }
             }
         }
     }
 }
 
-async fn ledger(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnPaymentV2>> {
+async fn ledger(opts: Opts, cmd: Transfer) -> Result<Response<BlockchainTxnSecurityExchangeV1>> {
     let ledger_transport = get_ledger_transport(&opts).await?;
     let amount = cmd.amount;
     let payee = cmd.address;
@@ -63,31 +69,27 @@ async fn ledger(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnPaymentV2>
     let client = new_client(pubkey.network);
 
     let account = accounts::get(&client, &pubkey.to_string()).await?;
-    let nonce: u64 = if let Some(nonce) = cmd.nonce {
+    let nonce: u64 = if let Some(nonce) = cmd.sec_nonce {
         nonce
     } else {
-        account.speculative_nonce + 1
+        account.speculative_sec_nonce + 1
     };
 
-    if account.balance.get_decimal() < amount.get_decimal() {
-        return Ok(Response::InsufficientBalance(account.balance, amount));
+    if account.sec_balance.get_decimal() < amount.get_decimal() {
+        return Ok(Response::InsufficientSecBalance(account.sec_balance, amount));
     }
     // serialize payer
     let payer = PublicKey::from_str(&account.address)?;
 
-    let payment = Payment {
+    let mut txn = BlockchainTxnSecurityExchangeV1 {
+        payer: payer.to_vec(),
         payee: payee.to_vec(),
         amount: u64::from(amount),
-        memo: u64::from(&cmd.memo),
-    };
-
-    let mut txn = BlockchainTxnPaymentV2 {
-        payer: payer.to_vec(),
-        payments: vec![payment],
         nonce,
         fee: 0,
         signature: vec![],
     };
+
     txn.fee = if let Some(fee) = cmd.fee {
         fee
     } else {
@@ -109,7 +111,7 @@ async fn ledger(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnPaymentV2>
         return Ok(Response::UserDeniedTransaction);
     }
 
-    let txn = BlockchainTxnPaymentV2::decode(exchange_pay_tx_result.data.as_slice())?;
+    let txn = BlockchainTxnSecurityExchangeV1::decode(exchange_pay_tx_result.data.as_slice())?;
     let payer = PublicKey::from_bytes(&txn.payer)?;
 
     println!("{}", payer.to_string());
@@ -120,12 +122,11 @@ async fn ledger(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnPaymentV2>
     Ok(Response::Txn(txn, pending_txn_status.hash, payer.network))
 }
 
-pub fn print_proposed_txn(txn: &BlockchainTxnPaymentV2) -> Result {
-    let payment = &txn.payments[0];
-    let payee = PublicKey::try_from(payment.payee.clone())?;
+pub fn print_proposed_txn(txn: &BlockchainTxnSecurityExchangeV1) -> Result {
+    let payee = PublicKey::try_from(txn.payee.clone())?;
     let units = match payee.network {
-        Network::TestNet => "TNT",
-        Network::MainNet => "HNT",
+        Network::TestNet => "TST",
+        Network::MainNet => "HST",
     };
 
     let mut table = Table::new();
@@ -133,15 +134,13 @@ pub fn print_proposed_txn(txn: &BlockchainTxnPaymentV2) -> Result {
     table.add_row(row![
         "Payee",
         &format!("Pay Amount {}", units),
-        "Memo",
         "Nonce",
         "DC Fee"
     ]);
     table.add_row(row![
         payee,
-        Hnt::from(payment.amount),
+        Hnt::from(txn.amount),
         txn.nonce,
-        Memo::from(payment.memo).to_string(),
         txn.fee
     ]);
     table.printstd();

@@ -1,9 +1,9 @@
 use crate::*;
 use byteorder::{LittleEndian as LE, WriteBytesExt};
-use helium_api::{accounts, models::Hnt};
+use helium_api::{accounts, models::{Hst, Hnt}};
 use helium_proto::{
-    BlockchainTxnPaymentV1, BlockchainTxnStakeValidatorV1, BlockchainTxnTokenBurnV1,
-    BlockchainTxnTransferValidatorStakeV1, BlockchainTxnUnstakeValidatorV1,
+    BlockchainTxnPaymentV2, BlockchainTxnStakeValidatorV1, BlockchainTxnSecurityExchangeV1, BlockchainTxnTokenBurnV1,
+    BlockchainTxnTransferValidatorStakeV1, BlockchainTxnUnstakeValidatorV1, Payment,
 };
 use helium_wallet::{
     keypair::{Network, PublicKey},
@@ -18,6 +18,8 @@ pub mod burn;
 pub mod pay;
 pub mod serializer;
 pub mod validator;
+pub mod securities;
+
 pub use serializer::*;
 
 const RETURN_CODE_OK: u16 = 0x9000;
@@ -65,6 +67,7 @@ async fn get_pubkey(
 pub enum Response<T> {
     Txn(T, String, Network),
     InsufficientBalance(Hnt, Hnt), // provides balance and send request
+    InsufficientSecBalance(Hst, Hst), // provides sec balance and send request
     UserDeniedTransaction,
 }
 

@@ -37,6 +37,13 @@ impl Cmd {
                 );
                 Err(Error::txn())
             }
+            Response::InsufficientSecBalance(balance, send_request) => {
+                println!(
+                    "Account security balance insufficient. {} HST on account but attempting to transfer {}",
+                    balance, send_request,
+                );
+                Err(Error::txn())
+            }
             Response::UserDeniedTransaction => {
                 println!("Transaction not confirmed");
                 Err(Error::txn())
