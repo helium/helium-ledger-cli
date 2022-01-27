@@ -18,6 +18,7 @@ pub enum Error {
     HeliumApi(#[from] helium_api::Error),
     #[error("Helium Crypto Error")]
     HeliumCrypto(#[from] helium_crypto::Error),
+
     #[error("Getting Fees")]
     GettingFees,
     #[error("Io Error")]

@@ -101,7 +101,6 @@ async fn run(cli: Cli) -> Result {
         Cmd::Pay(pay) => pay.run(cli.opts, version).await?,
         Cmd::Validators(validator) => validator.run(cli.opts, version).await?,
         Cmd::Securities(securities) => securities.run(cli.opts, version).await?,
-
     };
     if let Some((hash, network)) = result {
         print_txn(hash, network);
