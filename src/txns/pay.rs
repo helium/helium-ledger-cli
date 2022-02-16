@@ -108,7 +108,6 @@ async fn ledger(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnPaymentV2>
     let txn = BlockchainTxnPaymentV2::decode(exchange_pay_tx_result.data.as_slice())?;
     let payer = PublicKey::from_bytes(&txn.payer)?;
 
-    println!("{}", payer.to_string());
     let envelope = txn.in_envelope();
     // submit the signed tansaction to the API
     let pending_txn_status = submit_txn(&client, &envelope).await?;

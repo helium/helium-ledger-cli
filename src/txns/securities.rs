@@ -111,7 +111,6 @@ async fn ledger(opts: Opts, cmd: Transfer) -> Result<Response<BlockchainTxnSecur
     let txn = BlockchainTxnSecurityExchangeV1::decode(exchange_pay_tx_result.data.as_slice())?;
     let payer = PublicKey::from_bytes(&txn.payer)?;
 
-    println!("{}", payer.to_string());
     let envelope = txn.in_envelope();
     // submit the signed tansaction to the API
     let pending_txn_status = submit_txn(&client, &envelope).await?;
