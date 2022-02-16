@@ -36,7 +36,7 @@ pub enum PubkeyDisplay {
     On = 1,
 }
 
-pub(crate) async fn get_ledger_transport(opts: &Opts) -> Result<Box<dyn LedgerTransport>> {
+pub async fn get_ledger_transport(opts: &Opts) -> Result<Box<dyn LedgerTransport>> {
     Ok(if let Some(port) = opts.emulator {
         use std::net::{IpAddr, Ipv4Addr, SocketAddr};
         let socket = SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), port);
@@ -46,7 +46,7 @@ pub(crate) async fn get_ledger_transport(opts: &Opts) -> Result<Box<dyn LedgerTr
     })
 }
 
-pub(crate) async fn get_app_version(opts: &Opts) -> Result<Version> {
+pub async fn get_app_version(opts: &Opts) -> Result<Version> {
     let ledger = get_ledger_transport(opts).await?;
     let request = VersionRequest.apdu_serialize(0)?;
     let read = read_from_ledger(&ledger, request).await?;

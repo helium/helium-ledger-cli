@@ -16,11 +16,7 @@ pub enum Cmd {
 }
 
 impl Cmd {
-    pub(crate) async fn run(
-        self,
-        opts: Opts,
-        version: Version,
-    ) -> Result<Option<(String, Network)>> {
+    pub async fn run(self, opts: Opts, version: Version) -> Result<Option<(String, Network)>> {
         if version.major < 2 || version.minor < 1 {
             panic!("Upgrade the Helium Ledger App to use validator commands");
         };

@@ -27,11 +27,7 @@ pub struct Cmd {
 }
 
 impl Cmd {
-    pub(crate) async fn run(
-        self,
-        opts: Opts,
-        version: Version,
-    ) -> Result<Option<(String, Network)>> {
+    pub async fn run(self, opts: Opts, version: Version) -> Result<Option<(String, Network)>> {
         if version.major < 2 && (version.major == 2 && version.minor < 2) && opts.account != 0 {
             panic!("Upgrade the Helium Ledger App to use additional wallet accounts");
         };

@@ -44,11 +44,7 @@ pub enum Response {
 }
 
 impl Cmd {
-    pub(crate) async fn run(
-        self,
-        opts: Opts,
-        _version: Version,
-    ) -> Result<Option<(String, Network)>> {
+    pub async fn run(self, opts: Opts, _version: Version) -> Result<Option<(String, Network)>> {
         match self.ledger(opts).await? {
             Response::Success => Ok(None),
             Response::InsufficientBalance(balance, send_request) => {
@@ -76,7 +72,7 @@ impl Cmd {
         }
     }
 
-    pub(crate) async fn ledger(self, opts: Opts) -> Result<Response> {
+    pub async fn ledger(self, opts: Opts) -> Result<Response> {
         let validators = self.collect_validators()?;
 
         let ledger_transport = get_ledger_transport(&opts).await?;

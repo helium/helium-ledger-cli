@@ -1108,11 +1108,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "helium-ledger-cli"
+name = "helium-ledger"
 version = "2.1.1-alpha.0"
 dependencies = [
  "anyhow",
- "base64 0.13.0",
+ "base64 0.12.3",
  "bs58",
  "byteorder",
  "helium-api",

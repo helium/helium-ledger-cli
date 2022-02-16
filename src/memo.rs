@@ -1,4 +1,4 @@
-use crate::{Error, Result};
+use super::{Error, Result};
 use helium_wallet::traits::B64;
 use serde::de::{self, Deserialize, Deserializer, Visitor};
 use std::{fmt, str::FromStr};
