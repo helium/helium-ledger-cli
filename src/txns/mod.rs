@@ -4,17 +4,17 @@ use helium_api::{
     accounts,
     models::{Hnt, Hst},
 };
-use helium_proto::{
+pub use helium_proto::{
     BlockchainTxnPaymentV2, BlockchainTxnSecurityExchangeV1, BlockchainTxnStakeValidatorV1,
     BlockchainTxnTokenBurnV1, BlockchainTxnTransferValidatorStakeV1,
     BlockchainTxnUnstakeValidatorV1, Payment,
 };
-use helium_wallet::{
+pub use helium_wallet::{
     keypair::{Network, PublicKey},
     traits::{TxnEnvelope, TxnFee, TxnFeeConfig},
 };
-use ledger_transport::*;
-use prost::Message;
+pub use ledger_transport::*;
+pub use prost::Message;
 use std::convert::TryFrom;
 
 pub mod balance;
@@ -58,7 +58,7 @@ pub async fn get_app_version(opts: &Opts) -> Result<Version> {
     }
 }
 #[allow(clippy::borrowed_box)]
-async fn get_pubkey(
+pub async fn get_pubkey(
     account: u8,
     ledger: &Box<dyn LedgerTransport>,
     display: PubkeyDisplay,
@@ -76,7 +76,7 @@ pub enum Response<T> {
 }
 
 #[allow(clippy::borrowed_box)]
-async fn read_from_ledger(
+pub async fn read_from_ledger(
     ledger: &Box<dyn LedgerTransport>,
     command: APDUCommand,
 ) -> Result<APDUAnswer> {
