@@ -23,16 +23,19 @@ pub struct Cmd {
 }
 
 impl Cmd {
-    pub(crate) async fn run(
-        self,
-        opts: Opts,
-        _version: Version,
-    ) -> Result<Option<(String, Network)>> {
+    pub async fn run(self, opts: Opts, _version: Version) -> Result<Option<(String, Network)>> {
         match ledger(opts, self).await? {
             Response::Txn(_txn, hash, network) => Ok(Some((hash, network))),
             Response::InsufficientBalance(balance, send_request) => {
                 println!(
                     "Account balance insufficient. {} HNT on account but attempting to stake {}",
+                    balance, send_request,
+                );
+                Err(Error::txn())
+            }
+            Response::InsufficientSecBalance(balance, send_request) => {
+                println!(
+                    "Account security balance insufficient. {} HST on account but attempting to transfer {}",
                     balance, send_request,
                 );
                 Err(Error::txn())
@@ -44,10 +47,7 @@ impl Cmd {
         }
     }
 }
-pub(crate) async fn ledger(
-    opts: Opts,
-    unstake: Cmd,
-) -> Result<Response<BlockchainTxnUnstakeValidatorV1>> {
+pub async fn ledger(opts: Opts, unstake: Cmd) -> Result<Response<BlockchainTxnUnstakeValidatorV1>> {
     let ledger = get_ledger_transport(&opts).await?;
 
     // get account from API so we can get nonce and balance

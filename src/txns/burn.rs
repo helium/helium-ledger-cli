@@ -27,11 +27,7 @@ pub struct Cmd {
 }
 
 impl Cmd {
-    pub(crate) async fn run(
-        self,
-        opts: Opts,
-        version: Version,
-    ) -> Result<Option<(String, Network)>> {
+    pub async fn run(self, opts: Opts, version: Version) -> Result<Option<(String, Network)>> {
         if version.major < 2 && (version.major == 2 && version.minor < 2) && opts.account != 0 {
             panic!("Upgrade the Helium Ledger App to use additional wallet accounts");
         };
@@ -41,6 +37,13 @@ impl Cmd {
             Response::InsufficientBalance(balance, send_request) => {
                 println!(
                     "Account balance insufficient. {} HNT on account but attempting to burn {}",
+                    balance, send_request,
+                );
+                Err(Error::txn())
+            }
+            Response::InsufficientSecBalance(balance, send_request) => {
+                println!(
+                    "Account security balance insufficient. {} HST on account but attempting to transfer {}",
                     balance, send_request,
                 );
                 Err(Error::txn())

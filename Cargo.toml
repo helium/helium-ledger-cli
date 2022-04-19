@@ -1,18 +1,29 @@
 [package]
-name = "helium-ledger-cli"
+name = "helium-ledger"
 version = "2.1.1-alpha.0"
 authors = ["Louis Thiery <louis@helium.com>"]
 edition = "2021"
 publish = false
 
+description = "A Rust Helium Ledger library"
+readme = "README.md"
+keywords = ["helium", "blockchain", "wallet", "ledger", "hardware wallet"]
+
+license = "Apache-2.0"
+
+[[bin]]
+name = "helium-ledger-cli"
+path = "src/main.rs"
+doc = false
+
 [dependencies]
-anyhow = "1.0"
+anyhow = "1"
 thiserror = "1"
 byteorder = "1"
 structopt = "0"
 helium-api = "3"
 helium-wallet = { git = "https://github.com/helium/helium-wallet-rs", branch = "master" }
-helium-crypto = {git = "https://github.com/helium/helium-crypto-rs", tag="v0.3.2"}
+helium-crypto = {git = "https://github.com/helium/helium-crypto-rs", tag="v0.3.3"}
 helium-proto = { git = "https://github.com/helium/proto", branch="master"}
 prettytable-rs = "0"
 bs58 = {version = "0", features=["check"]}

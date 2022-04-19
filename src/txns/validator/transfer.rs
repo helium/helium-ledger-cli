@@ -57,11 +57,7 @@ pub struct Accept {
 }
 
 impl Cmd {
-    pub(crate) async fn run(
-        self,
-        opts: Opts,
-        _version: Version,
-    ) -> Result<Option<(String, Network)>> {
+    pub async fn run(self, opts: Opts, _version: Version) -> Result<Option<(String, Network)>> {
         match self {
             Cmd::Create(create) => match ledger_create(opts, create).await? {
                 Some(Response::Txn(_txn, hash, network)) => Ok(Some((hash, network))),
@@ -97,7 +93,7 @@ impl Cmd {
     }
 }
 
-pub(crate) async fn ledger_create(
+pub async fn ledger_create(
     opts: Opts,
     txfer_stake: Create,
 ) -> Result<Option<Response<BlockchainTxnTransferValidatorStakeV1>>> {
@@ -185,7 +181,7 @@ pub(crate) async fn ledger_create(
     }
 }
 
-pub(crate) async fn ledger_accept(
+pub async fn ledger_accept(
     opts: Opts,
     accept: Accept,
 ) -> Result<Option<Response<BlockchainTxnTransferValidatorStakeV1>>> {

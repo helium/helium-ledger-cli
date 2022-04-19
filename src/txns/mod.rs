@@ -1,23 +1,29 @@
 use crate::*;
 use byteorder::{LittleEndian as LE, WriteBytesExt};
-use helium_api::{accounts, models::Hnt};
-use helium_proto::{
-    BlockchainTxnPaymentV1, BlockchainTxnStakeValidatorV1, BlockchainTxnTokenBurnV1,
-    BlockchainTxnTransferValidatorStakeV1, BlockchainTxnUnstakeValidatorV1,
+use helium_api::{
+    accounts,
+    models::{Hnt, Hst},
 };
-use helium_wallet::{
+pub use helium_proto::{
+    BlockchainTxnPaymentV1, BlockchainTxnPaymentV2, BlockchainTxnSecurityExchangeV1,
+    BlockchainTxnStakeValidatorV1, BlockchainTxnTokenBurnV1, BlockchainTxnTransferValidatorStakeV1,
+    BlockchainTxnUnstakeValidatorV1, Payment,
+};
+pub use helium_wallet::{
     keypair::{Network, PublicKey},
     traits::{TxnEnvelope, TxnFee, TxnFeeConfig},
 };
-use ledger_transport::*;
-use prost::Message;
+pub use ledger_transport::*;
+pub use prost::Message;
 use std::convert::TryFrom;
 
 pub mod balance;
 pub mod burn;
 pub mod pay;
+pub mod securities;
 pub mod serializer;
 pub mod validator;
+
 pub use serializer::*;
 
 const RETURN_CODE_OK: u16 = 0x9000;
@@ -30,7 +36,7 @@ pub enum PubkeyDisplay {
     On = 1,
 }
 
-pub(crate) async fn get_ledger_transport(opts: &Opts) -> Result<Box<dyn LedgerTransport>> {
+pub async fn get_ledger_transport(opts: &Opts) -> Result<Box<dyn LedgerTransport>> {
     Ok(if let Some(port) = opts.emulator {
         use std::net::{IpAddr, Ipv4Addr, SocketAddr};
         let socket = SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), port);
@@ -40,7 +46,7 @@ pub(crate) async fn get_ledger_transport(opts: &Opts) -> Result<Box<dyn LedgerTr
     })
 }
 
-pub(crate) async fn get_app_version(opts: &Opts) -> Result<Version> {
+pub async fn get_app_version(opts: &Opts) -> Result<Version> {
     let ledger = get_ledger_transport(opts).await?;
     let request = VersionRequest.apdu_serialize(0)?;
     let read = read_from_ledger(&ledger, request).await?;
@@ -52,7 +58,7 @@ pub(crate) async fn get_app_version(opts: &Opts) -> Result<Version> {
     }
 }
 #[allow(clippy::borrowed_box)]
-async fn get_pubkey(
+pub async fn get_pubkey(
     account: u8,
     ledger: &Box<dyn LedgerTransport>,
     display: PubkeyDisplay,
@@ -65,11 +71,12 @@ async fn get_pubkey(
 pub enum Response<T> {
     Txn(T, String, Network),
     InsufficientBalance(Hnt, Hnt), // provides balance and send request
+    InsufficientSecBalance(Hst, Hst), // provides sec balance and send request
     UserDeniedTransaction,
 }
 
 #[allow(clippy::borrowed_box)]
-async fn read_from_ledger(
+pub async fn read_from_ledger(
     ledger: &Box<dyn LedgerTransport>,
     command: APDUCommand,
 ) -> Result<APDUAnswer> {
