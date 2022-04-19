@@ -1162,10 +1162,10 @@ dependencies = [
 
 [[package]]
 name = "helium-ledger"
-version = "2.1.1-alpha.0"
+version = "2.2.3"
 dependencies = [
  "anyhow",
- "base64 0.13.0",
+ "base64 0.12.3",
  "bs58",
  "byteorder",
  "helium-api",
@@ -1175,7 +1175,7 @@ dependencies = [
  "ledger-transport",
  "prettytable-rs",
  "prost",
- "qr2term 0.3.0",
+ "qr2term",
  "rust_decimal",
  "serde",
  "serde_json",
@@ -1219,7 +1219,7 @@ dependencies = [
  "lazy_static",
  "pbkdf2",
  "prettytable-rs",
- "qr2term 0.2.3",
+ "qr2term",
  "rand",
  "regex",
  "reqwest",
@@ -1975,16 +1975,6 @@ name = "qr2term"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1d9ed66d596477e4a04d2ebdbc9b657c417e8316ae7cc504f82ace5a786d4d7d"
-dependencies = [
- "crossterm",
- "qrcode",
-]
-
-[[package]]
-name = "qr2term"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dc0abb8faf7821d30ee0dea1a25cb0a4c7015dd28ebc9356a02c7281796eb4e9"
 dependencies = [
  "crossterm",
  "qrcode",
