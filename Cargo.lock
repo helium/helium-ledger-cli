@@ -1162,7 +1162,7 @@ dependencies = [
 
 [[package]]
 name = "helium-ledger"
-version = "2.2.3"
+version = "2.2.4-alpha.0"
 dependencies = [
  "anyhow",
  "base64 0.12.3",
