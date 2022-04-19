@@ -5,8 +5,8 @@ use helium_api::{
     models::{Hnt, Hst},
 };
 pub use helium_proto::{
-    BlockchainTxnPaymentV2, BlockchainTxnSecurityExchangeV1, BlockchainTxnStakeValidatorV1,
-    BlockchainTxnTokenBurnV1, BlockchainTxnTransferValidatorStakeV1,
+    BlockchainTxnPaymentV1, BlockchainTxnPaymentV2, BlockchainTxnSecurityExchangeV1,
+    BlockchainTxnStakeValidatorV1, BlockchainTxnTokenBurnV1, BlockchainTxnTransferValidatorStakeV1,
     BlockchainTxnUnstakeValidatorV1, Payment,
 };
 pub use helium_wallet::{

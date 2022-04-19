@@ -4,7 +4,7 @@ use serde::de::{self, Deserialize, Deserializer, Visitor};
 use std::{fmt, str::FromStr};
 
 #[derive(Debug, Default, PartialEq)]
-pub struct Memo(u64);
+pub struct Memo(pub u64);
 
 impl FromStr for Memo {
     type Err = Error;

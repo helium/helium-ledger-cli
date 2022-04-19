@@ -43,6 +43,25 @@ impl ApduSerializer for PubkeyRequest {
     }
 }
 
+impl ApduSerializer for BlockchainTxnPaymentV1 {
+    fn apdu_serialize(&self, account: u8) -> Result<APDUCommand> {
+        let mut data = Vec::new();
+        data.write_u64::<LE>(self.amount)?;
+        data.write_u64::<LE>(self.fee)?;
+        data.write_u64::<LE>(self.nonce)?;
+        data.push(0);
+        data.extend(self.payee.clone());
+
+        Ok(APDUCommand {
+            cla: 0xe0,
+            ins: INS_SIGN_PAYMENT_TXN,
+            p1: account,
+            p2: 0x00,
+            data,
+        })
+    }
+}
+
 impl ApduSerializer for BlockchainTxnPaymentV2 {
     fn apdu_serialize(&self, account: u8) -> Result<APDUCommand> {
         let mut data = Vec::new();
