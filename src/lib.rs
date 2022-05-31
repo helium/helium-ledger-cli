@@ -13,7 +13,7 @@ pub use std::{env, fmt, process};
 pub use structopt::StructOpt;
 pub mod error;
 pub mod memo;
-pub mod txns;
+pub mod cmd;
 
 const DEFAULT_TESTNET_BASE_URL: &str = "https://testnet-api.helium.wtf/v1";
 pub static USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"));
@@ -46,15 +46,15 @@ pub struct Cli {
 #[allow(clippy::large_enum_variant)]
 pub enum Cmd {
     /// Get wallet information
-    Balance(txns::balance::Cmd),
+    Balance(cmd::balance::Cmd),
     /// Burn to given address.
-    Burn(txns::burn::Cmd),
+    Burn(cmd::burn::Cmd),
     /// Pay a given address.
-    Pay(txns::pay::Cmd),
+    Pay(cmd::pay::Cmd),
     /// Stake a validator
-    Validators(txns::validator::Cmd),
+    Validators(cmd::validator::Cmd),
     /// Transfer Security Tokens
-    Securities(txns::securities::Cmd),
+    Securities(cmd::securities::Cmd),
 }
 
 pub struct Version {

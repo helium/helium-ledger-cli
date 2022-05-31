@@ -1,4 +1,4 @@
-use crate::txns::*;
+use crate::cmd::*;
 
 #[derive(Debug, StructOpt)]
 /// Unstake a given validator. The stake will be in a cooldown period after
