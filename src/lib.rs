@@ -11,9 +11,9 @@ pub use ledger_transport::exchange::Exchange as LedgerTransport;
 pub use qr2term::print_qr;
 pub use std::{env, fmt, process};
 pub use structopt::StructOpt;
+pub mod cmd;
 pub mod error;
 pub mod memo;
-pub mod cmd;
 
 const DEFAULT_TESTNET_BASE_URL: &str = "https://testnet-api.helium.wtf/v1";
 pub static USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"));
