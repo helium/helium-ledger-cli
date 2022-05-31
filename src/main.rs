@@ -12,7 +12,7 @@ async fn main() {
 }
 
 async fn run(cli: Cli) -> Result {
-    let version = txns::get_app_version(&cli.opts).await?;
+    let version = cmd::get_app_version(&cli.opts).await?;
     println!("Ledger running Helium App {}\r\n", version);
 
     let result = match cli.cmd {
