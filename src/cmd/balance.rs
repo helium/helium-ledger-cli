@@ -1,4 +1,5 @@
 use super::*;
+use helium_api::models::Account;
 
 #[derive(Debug, StructOpt)]
 pub struct Cmd {
@@ -21,29 +22,43 @@ impl Cmd {
             if self.qr_code {
                 println!("WARNING: to output a QR Code, do not use scan")
             }
-            let mut pubkeys = Vec::new();
+            let mut account_results = Vec::new();
+            // This kind of stinks. Ledger App should probably include Network
+            // when providing version. Until then, we have to get version from
+            // one of the public keys
+            let mut network = None;
             for i in 0..opts.account {
-                pubkeys.push(super::get_pubkey(i, &ledger_transport, PubkeyDisplay::Off).await?);
+                let pubkey = get_pubkey(i, &ledger_transport, PubkeyDisplay::Off).await?;
+                network = Some(pubkey.network);
+                let client = new_client(pubkey.network);
+                let address = pubkey.to_string();
+                let result = accounts::get(&client, &address).await;
+                account_results.push((pubkey, result));
             }
-            print_balance(&pubkeys).await?;
+            if let Some(network) = network {
+                print_balance(network, &account_results).await?;
+            }
         } else {
-            let pubkey =
-                super::get_pubkey(opts.account, &ledger_transport, PubkeyDisplay::On).await?;
-            let output = pubkey.to_string();
-            print_balance(&vec![pubkey]).await?;
+            let pubkey = get_pubkey(opts.account, &ledger_transport, PubkeyDisplay::Off).await?;
+            let pubkey_str = pubkey.to_string();
+            let client = new_client(pubkey.network);
+            let address = pubkey.to_string();
+            let result = accounts::get(&client, &address).await;
+            print_balance(pubkey.network, &vec![(pubkey, result)]).await?;
             if self.qr_code {
-                print_qr(&output)?;
+                print_qr(&pubkey_str)?;
             }
         }
         Ok(None)
     }
 }
 
-async fn print_balance(pubkeys: &[PublicKey]) -> Result {
-    // sample the first pubkey to determine network
-    let network = pubkeys[0].network;
+/// The ResultsVec is used so that a failure made "at some point" while
+/// fetching all of the addresses does not ruin all previous or preceding
+/// addresses
+type ResultsVec = Vec<(PublicKey, std::result::Result<Account, helium_api::Error>)>;
 
-    let client = new_client(network);
+async fn print_balance(network: Network, results: &ResultsVec) -> Result {
     let mut table = Table::new();
     table.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
     let balance = match network {
@@ -56,7 +71,7 @@ async fn print_balance(pubkeys: &[PublicKey]) -> Result {
         Network::MainNet => "Staked HNT",
     };
 
-    if pubkeys.len() > 1 {
+    if results.len() > 1 {
         table.set_titles(row![
             "Index",
             "Address",
@@ -74,10 +89,9 @@ async fn print_balance(pubkeys: &[PublicKey]) -> Result {
             "Security Tokens"
         ]);
     }
-    for (account_index, pubkey) in pubkeys.iter().enumerate() {
+    for (account_index, (pubkey, result)) in results.iter().enumerate() {
         let address = pubkey.to_string();
-        let result = accounts::get(&client, &address).await;
-        if pubkeys.len() > 1 {
+        if results.len() > 1 {
             match result {
                 Ok(account) => table.add_row(row![
                     account_index,
