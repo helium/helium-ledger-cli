@@ -7,3 +7,7 @@ It is important to use the Ledger's display as the source of truth when confirmi
 # Usage
 
 Please [use the documentation here](https://docs.helium.com/wallets/ledger) to learn how to use your Ledger hardware wallet with this companion app.
+
+# Homebrew Tap
+
+For a simple way to install the latest release in MacOS/Linux environment, check out [this community project](https://discord.com/channels/404106811252408320/743676367069249536/981246139661713508).
