@@ -104,7 +104,6 @@ pub async fn submit_txn(client: &Client, txn: &BlockchainTxn) -> Result<PendingT
 }
 
 fn new_client(network: Network) -> Client {
-    println!("{}", USER_AGENT);
     Client::new_with_base_url(api_url(network), USER_AGENT)
 }
 
