@@ -1,6 +1,5 @@
 use super::*;
 use crate::memo::Memo;
-use std::str::FromStr;
 
 #[derive(Debug, StructOpt)]
 pub struct Cmd {
@@ -25,7 +24,11 @@ impl Cmd {
             panic!("Upgrade the Helium Ledger App to use additional wallet accounts");
         };
 
-        if version.major == 2 && version.revision < 3 {
+        // versions before 2.2.3 are invalid
+        if version.major < 2
+            || version.major == 2
+                && ((version.minor == 2 && version.revision < 3) || (version.minor < 2))
+        {
             println!("WARNING: Helium Ledger application is outdated. Using payment_v1.");
             if self.memo.0 != 0 {
                 panic!("Non-default memo provided. Update Helium Ledger application to use payment_v2 which includes memo.");
@@ -97,8 +100,6 @@ async fn ledger_v2(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnPayment
     if account.balance.get_decimal() < amount.get_decimal() {
         return Ok(Response::InsufficientBalance(account.balance, amount));
     }
-    // serialize payer
-    let payer = PublicKey::from_str(&account.address)?;
 
     let payment = Payment {
         payee: payee.to_vec(),
@@ -107,7 +108,7 @@ async fn ledger_v2(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnPayment
     };
 
     let mut txn = BlockchainTxnPaymentV2 {
-        payer: payer.to_vec(),
+        payer: pubkey.to_vec(),
         payments: vec![payment],
         nonce,
         fee: 0,
@@ -157,8 +158,8 @@ pub fn print_proposed_txn_v2(txn: &BlockchainTxnPaymentV2) -> Result {
     table.add_row(row![
         "Payee",
         &format!("Pay Amount {}", units),
-        "Memo",
         "Nonce",
+        "Memo",
         "DC Fee"
     ]);
     table.add_row(row![
@@ -195,12 +196,10 @@ async fn ledger_v1(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnPayment
     if account.balance.get_decimal() < amount.get_decimal() {
         return Ok(Response::InsufficientBalance(account.balance, amount));
     }
-    // serialize payer
-    let payer = PublicKey::from_str(&account.address)?;
 
     let mut txn = BlockchainTxnPaymentV1 {
         payee: payee.to_vec(),
-        payer: payer.to_vec(),
+        payer: pubkey.to_vec(),
         amount: u64::from(amount),
         nonce,
         fee: 0,
@@ -233,7 +232,11 @@ async fn ledger_v1(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnPayment
     // submit the signed tansaction to the API
     let pending_txn_status = submit_txn(&client, &envelope).await?;
 
-    Ok(Response::Txn(txn, pending_txn_status.hash, payer.network))
+    Ok(Response::Txn(
+        txn,
+        pending_txn_status.hash,
+        Network::TestNet,
+    ))
 }
 
 pub fn print_proposed_txn_v1(txn: &BlockchainTxnPaymentV1) -> Result {

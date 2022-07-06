@@ -51,10 +51,16 @@ pub async fn get_app_version(opts: &Opts) -> Result<Version> {
     let request = VersionRequest.apdu_serialize(0)?;
     let read = read_from_ledger(&ledger, request).await?;
     let data = read.data;
-    if data.len() == 3 && read.retcode == RETURN_CODE_OK {
-        Ok(Version::from_bytes([data[0], data[1], data[2]]))
+    if read.retcode == RETURN_CODE_OK {
+        if data.len() == 4 {
+            Ok(Version::from_bytes([data[0], data[1], data[2], data[3]])?)
+        } else {
+            Err(Error::VersionError(format!("Data length is wrong with {} bytes. Your ledger application may require an update.", data.len())))
+        }
     } else {
-        Err(Error::VersionError)
+        Err(Error::VersionError(
+            "App unresponsive. Is it waiting for a command?".to_string(),
+        ))
     }
 }
 #[allow(clippy::borrowed_box)]

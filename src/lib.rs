@@ -3,7 +3,6 @@ extern crate prettytable;
 
 pub use error::Error;
 pub type Result<T = ()> = std::result::Result<T, Error>;
-
 pub use helium_api::models::transactions::PendingTxnStatus;
 pub use helium_proto::BlockchainTxn;
 pub use helium_wallet::keypair::Network;
@@ -17,6 +16,9 @@ pub mod memo;
 
 const DEFAULT_TESTNET_BASE_URL: &str = "https://testnet-api.helium.wtf/v1";
 pub static USER_AGENT: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"));
+
+const MAINNET_BYTE: u8 = 77;
+const TESTNET_BYTE: u8 = 84;
 
 /// Common options for most wallet commands
 #[derive(Debug, StructOpt)]
@@ -61,21 +63,35 @@ pub struct Version {
     major: u8,
     minor: u8,
     revision: u8,
+    network: Network,
 }
 
 impl Version {
-    pub fn from_bytes(bytes: [u8; 3]) -> Version {
-        Version {
+    pub fn from_bytes(bytes: [u8; 4]) -> Result<Version> {
+        let network = match bytes[3] {
+            MAINNET_BYTE => Ok(Network::MainNet),
+            TESTNET_BYTE => Ok(Network::TestNet),
+            _ => Err(Error::VersionError(format!(
+                "Network byte is invalid: {}",
+                bytes[3]
+            ))),
+        };
+        Ok(Version {
             major: bytes[0],
             minor: bytes[1],
             revision: bytes[2],
-        }
+            network: network?,
+        })
     }
 }
 
 impl fmt::Display for Version {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "v{}.{}.{}", self.major, self.minor, self.revision)
+        write!(
+            f,
+            "v{}.{}.{} [{}]",
+            self.major, self.minor, self.revision, self.network
+        )
     }
 }
 
