@@ -128,8 +128,8 @@ pub fn print_proposed_txn(txn: &BlockchainTxnUnstakeValidatorV1) -> Result {
     );
 
     println!(
-        "\nINFO: After unstaking, a validator can not access the staked amount\n\
-                until the enetered stake release height (approx. five months)."
+        "\nINFO: After unstaking, a wallet cannot access the staked amount\n\
+                until the entered stake release height is reached (approx. five months)."
     );
     Ok(())
 }

@@ -108,7 +108,6 @@ async fn ledger(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnTokenBurnV
         return Ok(Response::UserDeniedTransaction);
     }
     let data = exchange_pay_tx_result.data;
-    println!("{:?}", data);
     let txn = BlockchainTxnTokenBurnV1::decode(data.as_slice())?;
 
     let envelope = txn.in_envelope();

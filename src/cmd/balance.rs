@@ -23,21 +23,15 @@ impl Cmd {
                 println!("WARNING: to output a QR Code, do not use scan")
             }
             let mut account_results = Vec::new();
-            // This kind of stinks. Ledger App should probably include Network
-            // when providing version. Until then, we have to get version from
-            // one of the public keys
-            let mut network = None;
+            let network = version.network;
             for i in 0..opts.account {
                 let pubkey = get_pubkey(i, &ledger_transport, PubkeyDisplay::Off).await?;
-                network = Some(pubkey.network);
                 let client = new_client(pubkey.network);
                 let address = pubkey.to_string();
                 let result = accounts::get(&client, &address).await;
                 account_results.push((pubkey, result));
             }
-            if let Some(network) = network {
-                print_balance(network, &account_results).await?;
-            }
+            print_balance(network, &account_results).await?;
         } else {
             let pubkey = get_pubkey(opts.account, &ledger_transport, PubkeyDisplay::Off).await?;
             let pubkey_str = pubkey.to_string();
@@ -48,6 +42,8 @@ impl Cmd {
             if self.qr_code {
                 print_qr(&pubkey_str)?;
             }
+            // display pubkey on screen for comparison
+            let _pubkey = get_pubkey(opts.account, &ledger_transport, PubkeyDisplay::On).await?;
         }
         Ok(None)
     }
@@ -74,7 +70,7 @@ async fn print_balance(network: Network, results: &ResultsVec) -> Result {
     if results.len() > 1 {
         table.set_titles(row![
             "Index",
-            "Address",
+            "Wallet",
             balance,
             staked_balance,
             "Data Credits",
@@ -82,7 +78,7 @@ async fn print_balance(network: Network, results: &ResultsVec) -> Result {
         ]);
     } else {
         table.set_titles(row![
-            "Address",
+            "Wallet 0",
             balance,
             staked_balance,
             "Data Credits",
