@@ -2,7 +2,7 @@ use crate::*;
 use byteorder::{LittleEndian as LE, WriteBytesExt};
 use helium_api::{
     accounts,
-    models::{Hnt, Hst},
+    models::{Hnt, Hst, Iot, Mobile, Token},
 };
 pub use helium_proto::{
     BlockchainTxnPaymentV1, BlockchainTxnPaymentV2, BlockchainTxnSecurityExchangeV1,
@@ -76,8 +76,12 @@ pub async fn get_pubkey(
 
 pub enum Response<T> {
     Txn(T, String, Network),
-    InsufficientBalance(Hnt, Hnt), // provides balance and send request
-    InsufficientSecBalance(Hst, Hst), // provides sec balance and send request
+    InsufficientHntBalance(Hnt, Hnt),
+    InsufficientIotBalance(Iot, Iot),
+    InsufficientMobBalance(Mobile, Mobile),
+    InsufficientHstBalance(Hst, Hst),
+    InsufficientSecBalance(Hst, Hst),
+    /// to deprecate when deprecating sec
     UserDeniedTransaction,
 }
 

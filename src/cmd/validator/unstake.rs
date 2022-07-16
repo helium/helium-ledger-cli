@@ -26,24 +26,11 @@ impl Cmd {
     pub async fn run(self, opts: Opts, _version: Version) -> Result<Option<(String, Network)>> {
         match ledger(opts, self).await? {
             Response::Txn(_txn, hash, network) => Ok(Some((hash, network))),
-            Response::InsufficientBalance(balance, send_request) => {
-                println!(
-                    "Account balance insufficient. {} HNT on account but attempting to stake {}",
-                    balance, send_request,
-                );
-                Err(Error::txn())
-            }
-            Response::InsufficientSecBalance(balance, send_request) => {
-                println!(
-                    "Account security balance insufficient. {} HST on account but attempting to transfer {}",
-                    balance, send_request,
-                );
-                Err(Error::txn())
-            }
             Response::UserDeniedTransaction => {
                 println!("Transaction not confirmed");
                 Err(Error::txn())
             }
+            _ => panic!("Invalid error for this transaction type"),
         }
     }
 }
