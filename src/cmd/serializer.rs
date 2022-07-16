@@ -72,6 +72,7 @@ impl ApduSerializer for BlockchainTxnPaymentV2 {
         data.push(0);
         data.extend(payment.payee.clone());
         data.write_u64::<LE>(payment.memo)?;
+        data.write_u8(payment.token_type as u8)?;
 
         Ok(APDUCommand {
             cla: 0xe0,

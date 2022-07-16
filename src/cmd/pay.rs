@@ -1,12 +1,27 @@
 use super::*;
 use crate::memo::Memo;
+use helium_api::models::Account;
+use helium_proto::BlockchainTokenTypeV1;
+use serde::Deserialize;
+use std::str::FromStr;
+
+#[derive(Debug, Deserialize)]
+pub enum TokenInput {
+    Hnt,
+    Iot,
+    Mobile,
+    Hst,
+}
 
 #[derive(Debug, StructOpt)]
 pub struct Cmd {
     /// Address to send the tokens to
     address: PublicKey,
-    /// Amount of HNT to send
-    amount: Hnt,
+    /// Amount of token to send
+    amount: Token,
+    /// Type of token to send (hnt, iot, mobile, hst).
+    #[structopt(default_value = "hnt")]
+    token: TokenInput,
     /// Memo field to include. Provide as a base64 encoded string
     #[structopt(long, default_value = "AAAAAAAAAAA=")]
     memo: Memo,
@@ -36,9 +51,30 @@ impl Cmd {
 
             match ledger_v1(opts, self).await? {
                 Response::Txn(_txn, hash, network) => Ok(Some((hash, network))),
-                Response::InsufficientBalance(balance, send_request) => {
+                Response::InsufficientHntBalance(balance, send_request) => {
                     println!(
                         "Account balance insufficient. {} HNT on account but attempting to send {}",
+                        balance, send_request,
+                    );
+                    Err(Error::txn())
+                }
+                Response::InsufficientIotBalance(balance, send_request) => {
+                    println!(
+                        "Account balance insufficient. {} IOT on account but attempting to send {}",
+                        balance, send_request,
+                    );
+                    Err(Error::txn())
+                }
+                Response::InsufficientMobBalance(balance, send_request) => {
+                    println!(
+                        "Account balance insufficient. {} MOB on account but attempting to send {}",
+                        balance, send_request,
+                    );
+                    Err(Error::txn())
+                }
+                Response::InsufficientHstBalance(balance, send_request) => {
+                    println!(
+                        "Account balance insufficient. {} HST on account but attempting to send {}",
                         balance, send_request,
                     );
                     Err(Error::txn())
@@ -58,9 +94,30 @@ impl Cmd {
         } else {
             match ledger_v2(opts, self).await? {
                 Response::Txn(_txn, hash, network) => Ok(Some((hash, network))),
-                Response::InsufficientBalance(balance, send_request) => {
+                Response::InsufficientHntBalance(balance, send_request) => {
                     println!(
                         "Account balance insufficient. {} HNT on account but attempting to send {}",
+                        balance, send_request,
+                    );
+                    Err(Error::txn())
+                }
+                Response::InsufficientIotBalance(balance, send_request) => {
+                    println!(
+                        "Account balance insufficient. {} IOT on account but attempting to send {}",
+                        balance, send_request,
+                    );
+                    Err(Error::txn())
+                }
+                Response::InsufficientMobBalance(balance, send_request) => {
+                    println!(
+                        "Account balance insufficient. {} MOB on account but attempting to send {}",
+                        balance, send_request,
+                    );
+                    Err(Error::txn())
+                }
+                Response::InsufficientHstBalance(balance, send_request) => {
+                    println!(
+                        "Account balance insufficient. {} HST on account but attempting to send {}",
                         balance, send_request,
                     );
                     Err(Error::txn())
@@ -97,14 +154,21 @@ async fn ledger_v2(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnPayment
         account.speculative_nonce + 1
     };
 
-    if account.balance.get_decimal() < amount.get_decimal() {
-        return Ok(Response::InsufficientBalance(account.balance, amount));
+    if let Some(response) = invalid_balance_response(&cmd.token, &account, amount) {
+        return Ok(response);
     }
 
     let payment = Payment {
         payee: payee.to_vec(),
         amount: u64::from(amount),
         memo: u64::from(&cmd.memo),
+        max: false,
+        token_type: match cmd.token {
+            TokenInput::Hnt => BlockchainTokenTypeV1::Hnt.into(),
+            TokenInput::Hst => BlockchainTokenTypeV1::Hst.into(),
+            TokenInput::Iot => BlockchainTokenTypeV1::Iot.into(),
+            TokenInput::Mobile => BlockchainTokenTypeV1::Mobile.into(),
+        },
     };
 
     let mut txn = BlockchainTxnPaymentV2 {
@@ -193,8 +257,8 @@ async fn ledger_v1(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnPayment
         account.speculative_nonce + 1
     };
 
-    if account.balance.get_decimal() < amount.get_decimal() {
-        return Ok(Response::InsufficientBalance(account.balance, amount));
+    if let Some(response) = invalid_balance_response(&cmd.token, &account, amount) {
+        return Ok(response);
     }
 
     let mut txn = BlockchainTxnPaymentV1 {
@@ -261,4 +325,61 @@ pub fn print_proposed_txn_v1(txn: &BlockchainTxnPaymentV1) -> Result {
     on the Ledger Display"
     );
     Ok(())
+}
+
+impl FromStr for TokenInput {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self> {
+        let s = s.to_lowercase();
+        match s.as_str() {
+            "hnt" => Ok(TokenInput::Hnt),
+            "iot" => Ok(TokenInput::Iot),
+            "mobile" => Ok(TokenInput::Mobile),
+            "hst" => Ok(TokenInput::Hst),
+            _ => Err(Error::TokenTypeInput(s)),
+        }
+    }
+}
+
+fn invalid_balance_response<T>(
+    token: &TokenInput,
+    account: &Account,
+    amount: Token,
+) -> Option<Response<T>> {
+    match token {
+        TokenInput::Hnt => {
+            if account.balance.get_decimal() < amount.get_decimal() {
+                return Some(Response::InsufficientHntBalance(
+                    account.balance,
+                    Hnt::new(amount.get_decimal()),
+                ));
+            }
+        }
+        TokenInput::Hst => {
+            if account.sec_balance.get_decimal() < amount.get_decimal() {
+                return Some(Response::InsufficientHstBalance(
+                    account.sec_balance,
+                    Hst::new(amount.get_decimal()),
+                ));
+            }
+        }
+        TokenInput::Iot => {
+            if account.iot_balance.get_decimal() < amount.get_decimal() {
+                return Some(Response::InsufficientIotBalance(
+                    account.iot_balance,
+                    Iot::new(amount.get_decimal()),
+                ));
+            }
+        }
+        TokenInput::Mobile => {
+            if account.mobile_balance.get_decimal() < amount.get_decimal() {
+                return Some(Response::InsufficientMobBalance(
+                    account.mobile_balance,
+                    Mobile::new(amount.get_decimal()),
+                ));
+            }
+        }
+    };
+    None
 }

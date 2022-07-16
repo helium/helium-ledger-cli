@@ -34,9 +34,30 @@ impl Cmd {
 
         match ledger(opts, self).await? {
             Response::Txn(_txn, hash, network) => Ok(Some((hash, network))),
-            Response::InsufficientBalance(balance, send_request) => {
+            Response::InsufficientHntBalance(balance, send_request) => {
                 println!(
                     "Account balance insufficient. {} HNT on account but attempting to burn {}",
+                    balance, send_request,
+                );
+                Err(Error::txn())
+            }
+            Response::InsufficientIotBalance(balance, send_request) => {
+                println!(
+                    "Account balance insufficient. {} IOT on account but attempting to send {}",
+                    balance, send_request,
+                );
+                Err(Error::txn())
+            }
+            Response::InsufficientMobBalance(balance, send_request) => {
+                println!(
+                    "Account balance insufficient. {} MOB on account but attempting to send {}",
+                    balance, send_request,
+                );
+                Err(Error::txn())
+            }
+            Response::InsufficientHstBalance(balance, send_request) => {
+                println!(
+                    "Account balance insufficient. {} HST on account but attempting to send {}",
                     balance, send_request,
                 );
                 Err(Error::txn())
@@ -73,7 +94,10 @@ async fn ledger(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnTokenBurnV
     };
 
     if account.balance.get_decimal() < amount.get_decimal() {
-        return Ok(Response::InsufficientBalance(account.balance, amount));
+        return Ok(Response::InsufficientHntBalance(
+            account.balance,
+            Hnt::new(amount.get_decimal()),
+        ));
     }
     // serialize payer
     let payer = PublicKey::from_str(&account.address)?;

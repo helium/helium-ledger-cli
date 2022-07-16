@@ -36,6 +36,8 @@ pub enum Error {
     Base64Decode(#[from] base64::DecodeError),
     #[error("From Json Parsing Error {0}")]
     SerdeJson(#[from] serde_json::Error),
+    #[error("Invalid token type input: {0}")]
+    TokenTypeInput(String),
 }
 
 impl Error {

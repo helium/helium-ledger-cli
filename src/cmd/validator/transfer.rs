@@ -61,7 +61,7 @@ impl Cmd {
         match self {
             Cmd::Create(create) => match ledger_create(opts, create).await? {
                 Some(Response::Txn(_txn, hash, network)) => Ok(Some((hash, network))),
-                Some(Response::InsufficientBalance(balance, send_request)) => {
+                Some(Response::InsufficientHntBalance(balance, send_request)) => {
                     println!(
                         "Account balance insufficient. {} HNT on account but attempting to stake {}",
                         balance, send_request,
@@ -76,7 +76,7 @@ impl Cmd {
             },
             Cmd::Accept(accept) => match ledger_accept(opts, accept).await? {
                 Some(Response::Txn(_txn, hash, network)) => Ok(Some((hash, network))),
-                Some(Response::InsufficientBalance(balance, send_request)) => {
+                Some(Response::InsufficientHntBalance(balance, send_request)) => {
                     println!(
                         "Account balance insufficient. {} HNT on account but attempting to stake {}",
                         balance, send_request,
