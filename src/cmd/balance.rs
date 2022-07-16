@@ -67,6 +67,21 @@ async fn print_balance(network: Network, results: &ResultsVec) -> Result {
         Network::MainNet => "Staked HNT",
     };
 
+    let mobile_balance = match network {
+        Network::TestNet => "Balance TOB",
+        Network::MainNet => "Balance MOB",
+    };
+
+    let iot_balance = match network {
+        Network::TestNet => "Balance TOT",
+        Network::MainNet => "Balance IOT",
+    };
+
+    let security_tokens = match network {
+        Network::TestNet => "Testnet ST",
+        Network::MainNet => "Security Tokens",
+    };
+
     if results.len() > 1 {
         table.set_titles(row![
             "Index",
@@ -74,7 +89,9 @@ async fn print_balance(network: Network, results: &ResultsVec) -> Result {
             balance,
             staked_balance,
             "Data Credits",
-            "Security Tokens"
+            security_tokens,
+            iot_balance,
+            mobile_balance,
         ]);
     } else {
         table.set_titles(row![
@@ -82,7 +99,9 @@ async fn print_balance(network: Network, results: &ResultsVec) -> Result {
             balance,
             staked_balance,
             "Data Credits",
-            "Security Tokens"
+            security_tokens,
+            iot_balance,
+            mobile_balance,
         ]);
     }
     for (account_index, (pubkey, result)) in results.iter().enumerate() {
@@ -95,7 +114,9 @@ async fn print_balance(network: Network, results: &ResultsVec) -> Result {
                     account.balance,
                     account.staked_balance,
                     account.dc_balance,
-                    account.sec_balance
+                    account.sec_balance,
+                    account.iot_balance,
+                    account.mobile_balance,
                 ]),
                 Err(err) => table.add_row(row![account_index, address, H3 -> err.to_string()]),
             };
@@ -106,7 +127,9 @@ async fn print_balance(network: Network, results: &ResultsVec) -> Result {
                     account.balance,
                     account.staked_balance,
                     account.dc_balance,
-                    account.sec_balance
+                    account.sec_balance,
+                    account.iot_balance,
+                    account.mobile_balance,
                 ]),
                 Err(err) => table.add_row(row![address, H3 -> err.to_string()]),
             };

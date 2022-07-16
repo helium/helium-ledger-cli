@@ -1145,6 +1145,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "helium-api"
+version = "3.2.2-dev"
+source = "git+https://github.com/helium/helium-api-rs?branch=lthiery/add-new-tokens#4ee9e3f671d056d6b99b87203cd75c016c03a629"
+dependencies = [
+ "async-trait",
+ "base64 0.12.3",
+ "chrono",
+ "futures",
+ "reqwest",
+ "rust_decimal",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
 name = "helium-crypto"
 version = "0.3.3"
 source = "git+https://github.com/helium/helium-crypto-rs?tag=v0.3.3#882749ff33f1eab9d41ea78e8cdae4420627e4b7"
@@ -1168,7 +1184,7 @@ dependencies = [
  "base64 0.12.3",
  "bs58",
  "byteorder",
- "helium-api",
+ "helium-api 3.2.2-dev",
  "helium-crypto",
  "helium-proto",
  "helium-wallet",
@@ -1211,7 +1227,7 @@ dependencies = [
  "dialoguer",
  "geo-types",
  "h3ron",
- "helium-api",
+ "helium-api 3.2.1",
  "helium-crypto",
  "helium-proto",
  "hex",
