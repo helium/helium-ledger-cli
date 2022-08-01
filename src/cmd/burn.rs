@@ -50,7 +50,7 @@ impl Cmd {
             }
             Response::InsufficientMobBalance(balance, send_request) => {
                 println!(
-                    "Account balance insufficient. {} MOB on account but attempting to send {}",
+                    "Account balance insufficient. {} MOBILE on account but attempting to send {}",
                     balance, send_request,
                 );
                 Err(Error::txn())
