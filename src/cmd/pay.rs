@@ -67,7 +67,7 @@ impl Cmd {
                 }
                 Response::InsufficientMobBalance(balance, send_request) => {
                     println!(
-                        "Account balance insufficient. {} MOB on account but attempting to send {}",
+                        "Account balance insufficient. {} MOBILE on account but attempting to send {}",
                         balance, send_request,
                     );
                     Err(Error::txn())
@@ -110,7 +110,7 @@ impl Cmd {
                 }
                 Response::InsufficientMobBalance(balance, send_request) => {
                     println!(
-                        "Account balance insufficient. {} MOB on account but attempting to send {}",
+                        "Account balance insufficient. {} MOBILE on account but attempting to send {}",
                         balance, send_request,
                     );
                     Err(Error::txn())
@@ -212,9 +212,21 @@ async fn ledger_v2(opts: Opts, cmd: Cmd) -> Result<Response<BlockchainTxnPayment
 pub fn print_proposed_txn_v2(txn: &BlockchainTxnPaymentV2) -> Result {
     let payment = &txn.payments[0];
     let payee = PublicKey::try_from(payment.payee.clone())?;
+    let token_type = BlockchainTokenTypeV1::from_i32(txn.payments[0].token_type)
+        .expect("Invalid token_type found in transaction!");
     let units = match payee.network {
-        Network::TestNet => "TNT",
-        Network::MainNet => "HNT",
+        Network::TestNet => match token_type {
+            BlockchainTokenTypeV1::Hnt => "TNT",
+            BlockchainTokenTypeV1::Hst => "TST",
+            BlockchainTokenTypeV1::Iot => "TOT",
+            BlockchainTokenTypeV1::Mobile => "TOBILE",
+        },
+        Network::MainNet => match token_type {
+            BlockchainTokenTypeV1::Hnt => "HNT",
+            BlockchainTokenTypeV1::Hst => "HST",
+            BlockchainTokenTypeV1::Iot => "IOT",
+            BlockchainTokenTypeV1::Mobile => "MOBILE",
+        },
     };
 
     let mut table = Table::new();
@@ -228,7 +240,7 @@ pub fn print_proposed_txn_v2(txn: &BlockchainTxnPaymentV2) -> Result {
     ]);
     table.add_row(row![
         payee,
-        Hnt::from(payment.amount),
+        Token::from(payment.amount),
         txn.nonce,
         Memo::from(payment.memo).to_string(),
         txn.fee
@@ -335,7 +347,7 @@ impl FromStr for TokenInput {
         match s.as_str() {
             "hnt" => Ok(TokenInput::Hnt),
             "iot" => Ok(TokenInput::Iot),
-            "mobile" => Ok(TokenInput::Mobile),
+            "mob" | "mobile" => Ok(TokenInput::Mobile),
             "hst" => Ok(TokenInput::Hst),
             _ => Err(Error::TokenTypeInput(s)),
         }

@@ -68,8 +68,8 @@ async fn print_balance(network: Network, results: &ResultsVec) -> Result {
     };
 
     let mobile_balance = match network {
-        Network::TestNet => "Balance TOB",
-        Network::MainNet => "Balance MOB",
+        Network::TestNet => "Balance TOBILE",
+        Network::MainNet => "Balance MOBILE",
     };
 
     let iot_balance = match network {
