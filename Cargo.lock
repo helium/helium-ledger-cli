@@ -1133,7 +1133,24 @@ version = "3.2.2-dev"
 source = "git+https://github.com/helium/helium-api-rs?branch=lthiery/add-new-tokens#6460e10952470dfba991cc219e547f44b6946862"
 dependencies = [
  "async-trait",
- "base64 0.12.3",
+ "base64 0.13.0",
+ "chrono",
+ "futures",
+ "reqwest",
+ "rust_decimal",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
+name = "helium-api"
+version = "3.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b65e73b392df563b29559c7ab573635906b4921d75d0a7fd6dc2f12303bb0de5"
+dependencies = [
+ "async-trait",
+ "base64 0.13.0",
  "chrono",
  "futures",
  "reqwest",
@@ -1164,10 +1181,10 @@ name = "helium-ledger"
 version = "2.2.4-alpha.0"
 dependencies = [
  "anyhow",
- "base64 0.12.3",
+ "base64 0.13.0",
  "bs58",
  "byteorder",
- "helium-api",
+ "helium-api 3.3.0",
  "helium-crypto",
  "helium-proto",
  "helium-wallet",
@@ -1204,13 +1221,13 @@ dependencies = [
  "aes-gcm",
  "angry-purple-tiger",
  "anyhow",
- "base64 0.12.3",
+ "base64 0.13.0",
  "bitvec",
  "byteorder",
  "dialoguer",
  "geo-types",
  "h3ron",
- "helium-api",
+ "helium-api 3.2.2-dev",
  "helium-crypto",
  "helium-proto",
  "hex",
