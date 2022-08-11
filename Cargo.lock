@@ -1129,22 +1129,6 @@ dependencies = [
 
 [[package]]
 name = "helium-api"
-version = "3.2.2-dev"
-source = "git+https://github.com/helium/helium-api-rs?branch=lthiery/add-new-tokens#6460e10952470dfba991cc219e547f44b6946862"
-dependencies = [
- "async-trait",
- "base64 0.13.0",
- "chrono",
- "futures",
- "reqwest",
- "rust_decimal",
- "serde",
- "serde_json",
- "thiserror",
-]
-
-[[package]]
-name = "helium-api"
 version = "3.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b65e73b392df563b29559c7ab573635906b4921d75d0a7fd6dc2f12303bb0de5"
@@ -1184,7 +1168,7 @@ dependencies = [
  "base64 0.13.0",
  "bs58",
  "byteorder",
- "helium-api 3.3.0",
+ "helium-api",
  "helium-crypto",
  "helium-proto",
  "helium-wallet",
@@ -1216,18 +1200,18 @@ dependencies = [
 [[package]]
 name = "helium-wallet"
 version = "1.7.4"
-source = "git+https://github.com/helium/helium-wallet-rs?branch=lthiery/new-tokens#4f7725019cf9e22517c9abc464e04faa61db7717"
+source = "git+https://github.com/helium/helium-wallet-rs?branch=lthiery/new-tokens#29323580adbbced075a3f7a5a912edc504c86190"
 dependencies = [
  "aes-gcm",
  "angry-purple-tiger",
  "anyhow",
- "base64 0.13.0",
+ "base64 0.12.3",
  "bitvec",
  "byteorder",
  "dialoguer",
  "geo-types",
  "h3ron",
- "helium-api 3.2.2-dev",
+ "helium-api",
  "helium-crypto",
  "helium-proto",
  "hex",
