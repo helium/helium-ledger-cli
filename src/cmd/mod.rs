@@ -20,7 +20,6 @@ use std::convert::TryFrom;
 pub mod balance;
 pub mod burn;
 pub mod pay;
-pub mod securities;
 pub mod serializer;
 pub mod validator;
 

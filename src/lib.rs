@@ -55,8 +55,8 @@ pub enum Cmd {
     Pay(cmd::pay::Cmd),
     /// Stake a validator
     Validators(cmd::validator::Cmd),
-    /// Transfer Security Tokens
-    Securities(cmd::securities::Cmd),
+    /// Deprecated in favor for Pay with HST
+    Securities,
 }
 
 pub struct Version {
