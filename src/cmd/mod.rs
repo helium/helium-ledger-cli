@@ -56,7 +56,7 @@ pub async fn get_app_version(opts: &Opts) -> Result<Version> {
             Ok(Version::from_bytes([data[0], data[1], data[2], data[3]])?)
         } else {
             Err(Error::VersionError(format!(
-                " Your ledger application may not be running or require an update. \
+                "Your ledger application may not be running or require an update. \
             Unexpected response from ledger ({} bytes).",
                 data.len()
             )))
