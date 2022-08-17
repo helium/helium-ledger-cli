@@ -6,8 +6,10 @@ pub enum Error {
     CouldNotFindLedger(#[from] ledger_transport::errors::TransportError),
     #[error("Ledger is connected but Helium application does not appear to be running")]
     AppNotRunning,
-    #[error("Error getting version: {0}")]
+    #[error("Error getting version: {0}. Consider updating")]
     VersionError(String),
+    #[error("Your Helium Ledger Application is outdated. Please update using Ledger Live.")]
+    UnsupportedLedgerVersion,
     #[error("Error generating QR {0}")]
     Qr(#[from] qr2term::QrError),
     #[error("Error accessing Ledger HID Device. Be sure that Ledger Live is not running. {0}")]
