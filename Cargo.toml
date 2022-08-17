@@ -22,7 +22,7 @@ thiserror = "1"
 byteorder = "1"
 structopt = "0"
 helium-api = "3.3"
-helium-wallet = { git = "https://github.com/helium/helium-wallet-rs", branch = "lthiery/new-tokens" }
+helium-wallet = { git = "https://github.com/helium/helium-wallet-rs" }
 helium-crypto = {git = "https://github.com/helium/helium-crypto-rs", tag="v0.3.3"}
 helium-proto = { git = "https://github.com/helium/proto", branch="master"}
 prettytable-rs = "0"
