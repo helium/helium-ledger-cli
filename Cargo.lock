@@ -1200,7 +1200,7 @@ dependencies = [
 [[package]]
 name = "helium-wallet"
 version = "1.7.4"
-source = "git+https://github.com/helium/helium-wallet-rs?branch=lthiery/new-tokens#29323580adbbced075a3f7a5a912edc504c86190"
+source = "git+https://github.com/helium/helium-wallet-rs#8710e8bfbaccf9ec7a5a157bdd861ad72496c13f"
 dependencies = [
  "aes-gcm",
  "angry-purple-tiger",
