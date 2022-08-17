@@ -20,7 +20,10 @@ async fn run(cli: Cli) -> Result {
         Cmd::Burn(burn) => burn.run(cli.opts, version).await?,
         Cmd::Pay(pay) => pay.run(cli.opts, version).await?,
         Cmd::Validators(validator) => validator.run(cli.opts, version).await?,
-        Cmd::Securities(securities) => securities.run(cli.opts, version).await?,
+        Cmd::Securities => {
+            println!("This command is deprecated in favor of payment_v2 with token type HST");
+            None
+        }
     };
     if let Some((hash, network)) = result {
         print_txn(hash, network);
